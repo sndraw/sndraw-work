@@ -6,6 +6,9 @@ const GrpahInfoList = () => {
   return {
     namespace: 'graphList',
     graphList,
+    getGraphInfo: (graph: string) => {
+      return graphList?.find((item) => item.id === graph || item.name === graph);
+    },
     setGraphList: (graphList: API.AIGraphInfo[] | null) => {
       setGraphList(graphList);
     },

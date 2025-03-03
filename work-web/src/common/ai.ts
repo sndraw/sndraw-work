@@ -39,6 +39,10 @@ export const AI_GRAPH_PLATFORM_MAP = {
     value: 'lightrag',
     text: 'LightRAG',
   },
+  lightrag_multi: {
+    value: 'lightrag_multi',
+    text: 'LightRAG_Multi',
+  },
 };
 // 支持的平台类型-MAP
 export const AI_PLATFORM_TYPE_MAP = {

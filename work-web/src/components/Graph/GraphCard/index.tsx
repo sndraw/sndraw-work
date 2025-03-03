@@ -12,7 +12,7 @@ import {
   TableOutlined,
 } from '@ant-design/icons';
 import { useToken } from '@ant-design/pro-components';
-import { Access, generatePath, Link, useAccess } from '@umijs/max';
+import { Access, generatePath, Link, useAccess, useModel } from '@umijs/max';
 import {
   Avatar,
   Button,
@@ -29,12 +29,13 @@ import GraphWorkspaceSave, {
   GraphWorkSpaceActionEnum,
 } from '../GraphWorkSpaceSave';
 import styles from './index.less';
+import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
 
 type GraphCardPropsType = {
   // 模式
   mode: MODE_ENUM;
   // 当前图谱空间
-  item?: API.AIGraphWorkspaceInfo;
+  item: API.AIGraphWorkspaceInfo;
   // 刷新
   refresh: () => void;
   // 样式
@@ -47,7 +48,9 @@ const GraphCard: React.FC<GraphCardPropsType> = (props: GraphCardPropsType) => {
   // 主题
   const { token } = useToken();
   const [loading, setLoading] = useState(false);
-  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT;
+  const { getGraphInfo } = useModel('graphList');
+  const graphInfo = getGraphInfo(item.graph);
+  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT && graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
 
   // 删除图谱空间
   const handleDelete = async ({
@@ -120,14 +123,14 @@ const GraphCard: React.FC<GraphCardPropsType> = (props: GraphCardPropsType) => {
                 <div className={styles?.nodeLabel}>图谱名称：</div>
                 <div className={styles?.nodeContent}>{item?.graph}</div>
               </div>
-              {/* admin权限 */}
-              <Access accessible={canEdit}>
-                {item?.graphCode && (
+              {item?.graphCode && (
                   <div className={styles?.cardItemNode}>
                     <div className={styles?.nodeLabel}>接口类型：</div>
                     <div className={styles?.nodeContent}>{item?.graphCode}</div>
                   </div>
                 )}
+              {/* admin权限 */}
+              <Access accessible={canEdit}>
                 {item?.graphHost && (
                   <div className={styles?.cardItemNode}>
                     <div className={styles?.nodeLabel}>图谱地址：</div>
@@ -202,7 +205,7 @@ const GraphCard: React.FC<GraphCardPropsType> = (props: GraphCardPropsType) => {
                 workspace: encodeURIComponent(item?.name),
               }),
             }}
-            // target="_blank"
+          // target="_blank"
           >
             <Button
               type="text"
@@ -221,7 +224,7 @@ const GraphCard: React.FC<GraphCardPropsType> = (props: GraphCardPropsType) => {
                 workspace: encodeURIComponent(item?.name),
               }),
             }}
-            // target="_blank"
+          // target="_blank"
           >
             <Button
               type="text"
@@ -240,7 +243,7 @@ const GraphCard: React.FC<GraphCardPropsType> = (props: GraphCardPropsType) => {
                 workspace: encodeURIComponent(item?.name),
               }),
             }}
-            // target="_blank"
+          // target="_blank"
           >
             <Button
               type="text"
@@ -259,7 +262,7 @@ const GraphCard: React.FC<GraphCardPropsType> = (props: GraphCardPropsType) => {
                 workspace: encodeURIComponent(item?.name),
               }),
             }}
-            // target="_blank"
+          // target="_blank"
           >
             <Button
               type="text"

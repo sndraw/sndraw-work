@@ -1,7 +1,7 @@
 import useHeaderHeight from '@/hooks/useHeaderHeight';
 import { ReloadOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
-import { Button, Divider, Input, Space, Tag, Typography } from 'antd';
+import { Button, Divider, FloatButton, Input, Space, Tag, Typography } from 'antd';
 import classNames from 'classnames';
 import { Key, useCallback, useRef, useState } from 'react';
 import LinkDelete from '../GraphMap/LinkPanel/LinkDelete';
@@ -10,6 +10,8 @@ import NodeDelete from '../GraphMap/NodePanel/NodeDelete';
 import NodeEdit from '../GraphMap/NodePanel/NodeEdit';
 import { formatText } from '../GraphMap/utils';
 import styles from './index.less';
+import { useModel } from '@umijs/max';
+import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
 const { Title, Paragraph, Text } = Typography;
 
 type GraphTablePropsType = {
@@ -46,6 +48,10 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
 
   const listRef = useRef<any>(null);
   const headerHeight = useHeaderHeight();
+
+  const { getGraphInfo } = useModel('graphList');
+  const graphInfo = getGraphInfo(graph);
+  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
 
   const filterNodes = (dataList: any[], searchText: string): any[] => {
     return dataList.filter((item: any) =>
@@ -97,62 +103,71 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
                 {formatText(row?.edge?.target)}
               </Tag>
             </span>
-            <LinkEdit
-              graph={graph}
-              workspace={workspace}
-              link={row.edge}
-              refresh={() => {
-                // setVisible(false);
-                refresh?.();
-              }}
-              disabled={loading}
-            />
-            <LinkDelete
-              graph={graph}
-              workspace={workspace}
-              link={row.edge}
-              refresh={() => {
-                // setVisible(false);
-                refresh?.();
-              }}
-              disabled={loading}
-            />
+            {
+              canEdit &&
+              <>
+                <LinkEdit
+                  graph={graph}
+                  workspace={workspace}
+                  link={row.edge}
+                  refresh={() => {
+                    // setVisible(false);
+                    refresh?.();
+                  }}
+                  disabled={loading}
+                />
+                <LinkDelete
+                  graph={graph}
+                  workspace={workspace}
+                  link={row.edge}
+                  refresh={() => {
+                    // setVisible(false);
+                    refresh?.();
+                  }}
+                  disabled={loading}
+                />
+              </>
+            }
           </Space>
         );
       },
     },
-    {
-      title: '操作',
-      key: 'action',
-      width: 100,
-      render: (text, row) => {
-        return (
-          <div>
-            <NodeEdit
-              graph={graph}
-              workspace={workspace}
-              node={row}
-              refresh={() => {
-                // setVisible(false);
-                refresh?.();
-              }}
-              disabled={loading}
-            />
-            <NodeDelete
-              graph={graph}
-              workspace={workspace}
-              node={row}
-              refresh={() => {
-                refresh?.();
-              }}
-              disabled={loading}
-            />
-          </div>
-        );
-      },
-    },
   ];
+  if (canEdit) {
+    columns.push(
+      {
+        title: '操作',
+        key: 'action',
+        width: 100,
+        render: (text, row) => {
+          return (
+            <div>
+              <NodeEdit
+                graph={graph}
+                workspace={workspace}
+                node={row}
+                refresh={() => {
+                  // setVisible(false);
+                  refresh?.();
+                }}
+                disabled={loading}
+              />
+              <NodeDelete
+                graph={graph}
+                workspace={workspace}
+                node={row}
+                refresh={() => {
+                  refresh?.();
+                }}
+                disabled={loading}
+              />
+            </div>
+          );
+        },
+      },
+    )
 
+  }
   // 计算样式
   const containerStyle = useCallback(() => {
     return {
@@ -188,15 +203,15 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
         />
         <>
           {/* 刷新 */}
-          <Button
+          <FloatButton
             className={styles.refreshButton}
-            title="刷新"
+            tooltip="刷新"
             icon={<ReloadOutlined />}
             key="refresh"
             onClick={() => {
               refresh?.();
             }}
-          ></Button>
+          ></FloatButton>
         </>
       </Space>
 

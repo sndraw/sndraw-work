@@ -58,6 +58,10 @@ export const AI_GRAPH_PLATFORM_MAP = {
     value: 'lightrag',
     text: 'LightRAG'
   },
+  lightrag_multi: {
+    value: 'lightrag_multi',
+    text: 'LightRAG_Multi',
+  },
 }
 
 // 支持的知识图谱-检索类型-MAP
