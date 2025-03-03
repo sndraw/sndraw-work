@@ -11,7 +11,7 @@
 
 - ### 知识图谱（多知识图谱管理、2D/3D图谱展示、图谱问答）
   - [LightRAG](https://github.com/HKUDS/LightRAG)
-  - [LightRAG_Multi(多图谱空间版本)](https://github.com/sndraw/LightRAG-Workspaces)
+  - [LightRAG_Multi(多图谱空间版本)](https://github.com/sndraw/LightRAG-Multi)
 
 - ### 用户管理
   - 用户注册和登录管理
