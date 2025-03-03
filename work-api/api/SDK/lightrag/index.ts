@@ -1,3 +1,4 @@
+import { AI_GRAPH_PLATFORM_MAP } from "@/common/ai";
 import request from "@/common/request";
 import FormData from "form-data";
 
@@ -8,18 +9,36 @@ export interface Config {
 export default class LightragAPI {
     protected readonly host: string = '';
     protected readonly apiKey: string = '';
+    protected readonly code: string = '';
+    protected readonly config: any;
 
-    constructor(config?: { host?: string; apiKey?: string }) {
+
+    constructor(config: { host: string; apiKey: string; code: any; }) {
         if (config?.host) {
             this.host = config.host
         }
         if (config?.apiKey) {
             this.apiKey = config.apiKey;
         }
+        if (config?.code) {
+            this.code = config.code
+        }
+        this.config = config;
     }
 
     async queryGraphWorkspaceList() {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                return {
+                    data: [
+                        {
+                            name: '默认空间',
+                            mtime: this.config?.updatedAt,
+                            birthtime: this.config?.createdAt,
+                        }
+                    ]
+                }
+            }
             const result: any = await request(`${this.host}/workspaces/all`, {
                 method: 'GET',
                 headers: {
@@ -39,6 +58,15 @@ export default class LightragAPI {
     }
     async getGraphWorkspaceInfo(workspace: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                return {
+                    data: {
+                        name: '默认空间',
+                        mtime: this.config?.updatedAt,
+                        birthtime: this.config?.createdAt,
+                    }
+                }
+            }
             const result: any = await request(`${this.host}/workspaces/${encodeURIComponent(workspace)}`, {
                 method: 'GET',
                 headers: {
@@ -61,6 +89,9 @@ export default class LightragAPI {
     }) {
         const { name } = data;
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const result: any = await request(`${this.host}/workspaces`, {
                 method: 'POST',
                 headers: {
@@ -87,6 +118,9 @@ export default class LightragAPI {
     }) {
         const { name } = data;
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const result: any = await request(`${this.host}/workspaces/${encodeURIComponent(workspace)}`, {
                 method: 'PUT',
                 headers: {
@@ -110,6 +144,9 @@ export default class LightragAPI {
 
     async deleteGraphWorkspace(workspace: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const result: any = await request(`${this.host}/workspaces/${encodeURIComponent(workspace)}`, {
                 method: 'DELETE',
                 headers: {
@@ -130,6 +167,50 @@ export default class LightragAPI {
 
     async getGraphData(workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                const result: any = await request(`${this.host}/graphs`, {
+                    method: 'GET',
+                    params:{
+                        label:"*"
+                    },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': this.apiKey
+                    },
+                });
+                if (!result) {
+                    throw new Error(result?.message);
+                }
+                const nodes = result?.nodes?.map((node: any) =>{
+                    return {
+                        id: node.id,
+                        label: node?.labels?.join(","),
+                        entity_type: node?.properties?.entity_type,
+                        description: node?.properties?.description,
+                        source_id: node?.properties?.source_id,
+                    }
+                })
+
+                const edges = result?.edges?.map((edge: any) =>{
+                    return {
+                        id: edge.id,
+                        source: edge.source,
+                        target: edge.target,
+                        weight: edge?.properties?.weight,
+                        keywords: edge?.properties?.keywords,
+                        description: edge?.properties?.description,
+                        source_id: edge?.properties?.source_id,
+                    }
+                })
+
+                return {
+                    data: {
+                        nodes,
+                        edges,
+                    }
+                };
+
+            }
             const result: any = await request(`${this.host}/graph/data`, {
                 method: 'GET',
                 headers: {
@@ -151,6 +232,9 @@ export default class LightragAPI {
 
     async getGraphNode(node_id: string, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const result: any = await request(`${this.host}/graph/entity/${encodeURIComponent(node_id)}`, {
                 method: 'GET',
                 headers: {
@@ -172,6 +256,9 @@ export default class LightragAPI {
 
     async updateGraphNode(node_id: string, node_data: any, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             if (!node_id) {
                 throw new Error("节点ID参数错误");
             }
@@ -202,6 +289,9 @@ export default class LightragAPI {
 
     async deleteGraphNode(node_id: string, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const result: any = await request(`${this.host}/graph/entity/${encodeURIComponent(node_id)}`, {
                 method: 'DELETE',
                 headers: {
@@ -223,6 +313,9 @@ export default class LightragAPI {
 
     async getGraphLink(link_id: string, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const link_ids = link_id.split("_");
             const src_entity_name = link_ids[0];
             const tgt_entity_name = link_ids[1];
@@ -255,6 +348,9 @@ export default class LightragAPI {
 
     async updateGraphLink(link_id: string, link_data: any, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const link_ids = link_id.split("_");
             const src_entity_name = link_ids[0];
             const tgt_entity_name = link_ids[1];
@@ -290,6 +386,9 @@ export default class LightragAPI {
 
     async deleteGraphLink(link_id: string, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                throw new Error("该接口类型不支持此操作");
+            }
             const link_ids = link_id.split("_");
             const src_entity_name = link_ids[0];
             const tgt_entity_name = link_ids[1];
@@ -353,6 +452,21 @@ export default class LightragAPI {
 
     async insertFile(formData: FormData, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                const result: any = await request(`${this.host}/documents/file_batch`, {
+                    method: 'POST',
+                    headers: {
+                        ...(formData?.getHeaders() || {}),
+                        'X-API-Key': this.apiKey,
+                    },
+                    data: formData,
+                    timeout: 0
+                });
+                if (result?.code !== 0 && result?.status !== "success") {
+                    throw new Error(result.message);
+                }
+                return result;
+            }
             const result: any = await request(`${this.host}/documents/batch`, {
                 method: 'POST',
                 headers: {
@@ -396,7 +510,30 @@ export default class LightragAPI {
     }
 
     async queryGraphDocumentList(workspace?: string) {
+
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                const result: any = await request(`${this.host}/documents`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': this.apiKey
+                    }
+                });
+                if (!result?.statuses) {
+                    throw new Error(result.message);
+                }
+                let data: any[] = []
+                for (const statuse of Object.entries(result.statuses)) {
+                    const list = statuse?.[1] || []
+                    if (Array.isArray(list)) {
+                        data = [...data, ...list]
+                    }
+                }
+                return {
+                    data: data,
+                };
+            }
             const result: any = await request(`${this.host}/graph/document`, {
                 method: 'GET',
                 headers: {

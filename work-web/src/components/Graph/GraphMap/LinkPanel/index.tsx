@@ -6,6 +6,7 @@ import { formatText } from '../utils';
 import styles from './index.less';
 import LinkDelete from './LinkDelete';
 import LinkEdit from './LinkEdit';
+import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
 
 // 添加props类型
 interface LinkPanelProps {
@@ -33,6 +34,9 @@ const LinkPanel: React.FC<LinkPanelProps> = (props) => {
   //     manual: true,
   //   },
   // );
+  const { getGraphInfo } = useModel('graphList');
+  const graphInfo = getGraphInfo(graph);
+  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
   const [loading, setLoading] = useState(false);
   const data = operation?.link;
   // 打开抽屉
@@ -62,48 +66,33 @@ const LinkPanel: React.FC<LinkPanelProps> = (props) => {
       open={visible}
       destroyOnClose={true}
       footer={
-        <Flex gap={16} wrap align="center" justify="end">
-          {/* 刷新 */}
-          {/* <Button
-            title="刷新"
-            type="text"
-            icon={<ReloadOutlined />}
-            onClick={() => {
-              run?.();
-            }}
-          /> */}
-          {/* 编辑 */}
-          {/* 编辑 */}
-          <LinkEdit
-            graph={graph}
-            workspace={workspace}
-            link={data}
-            refresh={() => {
-              // setVisible(false);
-              refresh?.();
-            }}
-            disabled={loading}
-          />
-          {/* <Button
-            type="text"
-            onClick={() => {
-              // refresh?.();
-            }}
-          >
-            编辑
-          </Button> */}
-          {/* 删除 */}
-          <LinkDelete
-            graph={graph}
-            workspace={workspace}
-            link={data}
-            refresh={() => {
-              setVisible(false);
-              refresh?.();
-            }}
-            disabled={loading}
-          />
-        </Flex>
+        <>
+          {canEdit && <Flex gap={16} wrap align="center" justify="end">
+            {/* 编辑 */}
+            <LinkEdit
+              graph={graph}
+              workspace={workspace}
+              link={data}
+              refresh={() => {
+                // setVisible(false);
+                refresh?.();
+              }}
+              disabled={loading}
+            />
+            {/* 删除 */}
+            <LinkDelete
+              graph={graph}
+              workspace={workspace}
+              link={data}
+              refresh={() => {
+                setVisible(false);
+                refresh?.();
+              }}
+              disabled={loading}
+            />
+          </Flex>
+          }
+        </>
       }
     >
       <Spin spinning={loading}>

@@ -3,7 +3,6 @@ import RouteMap from "@/constants/RouteMap";
 import admin_role from "./admin/role";
 import admin_user from "./admin/user";
 import ai_chat from "./common/ai_chat";
-import ai_graph from "./common/ai_graph";
 import ai_graph_multi  from "./common/ai_graph_multi";
 import ai_lm_third from "./common/ai_lm_third";
 import ai_platform from "./common/ai_platform";
@@ -29,7 +28,6 @@ const routerList = [
   ...admin_role,
   ...admin_user,
   ...ai_chat,
-  ...ai_graph,
   ...ai_graph_multi,
   ...ai_lm_third,
   ...ai_platform,

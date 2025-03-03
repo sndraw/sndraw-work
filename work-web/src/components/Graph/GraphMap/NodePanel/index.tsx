@@ -7,6 +7,7 @@ import { formatText } from '../utils';
 import styles from './index.less';
 import NodeDelete from './NodeDelete';
 import NodeEdit from './NodeEdit';
+import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
 
 // 添加props类型
 interface NodePanelProps {
@@ -37,6 +38,9 @@ const NodePanel: React.FC<NodePanelProps> = (props) => {
   //   },
   // );
   const [loading, setLoading] = useState(false);
+  const { getGraphInfo } = useModel('graphList');
+  const graphInfo = getGraphInfo(graph);
+  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
   const data = operation?.node;
   // 打开抽屉
   useEffect(() => {
@@ -65,47 +69,34 @@ const NodePanel: React.FC<NodePanelProps> = (props) => {
       destroyOnClose={true}
       open={visible}
       footer={
-        <Flex gap={16} wrap align="center" justify="end">
-          {/* 刷新 */}
-          {/* <Button
-            title="刷新"
-            type="text"
-            icon={<ReloadOutlined />}
-            onClick={() => {
-              run?.();
-            }}
-          /> */}
-          {/* 编辑 */}
-          <NodeEdit
-            graph={graph}
-            workspace={workspace}
-            node={data}
-            refresh={() => {
-              // setVisible(false);
-              refresh?.();
-            }}
-            disabled={loading}
-          />
-          {/* <Button
-            type="text"
-            onClick={() => {
-              // refresh?.();
-            }}
-          >
-            编辑
-          </Button> */}
-          {/* 删除 */}
-          <NodeDelete
-            graph={graph}
-            workspace={workspace}
-            node={data}
-            refresh={() => {
-              setVisible(false);
-              refresh?.();
-            }}
-            disabled={loading}
-          />
-        </Flex>
+        <>
+          {canEdit &&
+            <Flex gap={16} wrap align="center" justify="end">
+              {/* 编辑 */}
+              <NodeEdit
+                graph={graph}
+                workspace={workspace}
+                node={data}
+                refresh={() => {
+                  // setVisible(false);
+                  refresh?.();
+                }}
+                disabled={loading}
+              />
+              {/* 删除 */}
+              <NodeDelete
+                graph={graph}
+                workspace={workspace}
+                node={data}
+                refresh={() => {
+                  setVisible(false);
+                  refresh?.();
+                }}
+                disabled={loading}
+              />
+            </Flex>
+          }
+        </>
       }
     >
       <Spin spinning={loading}>

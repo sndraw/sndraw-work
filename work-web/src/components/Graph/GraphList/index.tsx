@@ -1,7 +1,7 @@
 import { MODE_ENUM } from '@/constants/DataMap';
 import { ReloadOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
-import { Access, Outlet, useAccess } from '@umijs/max';
+import { Access, Outlet, useAccess, useModel } from '@umijs/max';
 import { FloatButton, Input, Space } from 'antd';
 import classNames from 'classnames';
 import { useMemo, useState } from 'react';
@@ -11,6 +11,7 @@ import GraphWorkspaceSave, {
 } from '../GraphWorkSpaceSave';
 import GraphCard from './../GraphCard';
 import styles from './index.less';
+import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
 
 type GraphListPropsType = {
   mode?: MODE_ENUM;
@@ -23,6 +24,8 @@ type GraphListPropsType = {
   children?: React.ReactNode;
 };
 const GraphList: React.FC<GraphListPropsType> = (props) => {
+  const { getGraphInfo } = useModel('graphList');
+  
   const [searchText, setSearchText] = useState<string>('' as string);
   const {
     mode = MODE_ENUM.VIEW,
@@ -39,9 +42,11 @@ const GraphList: React.FC<GraphListPropsType> = (props) => {
     return dataList?.filter((item: any) => item.name.includes(searchText));
   }, [dataList, searchText]);
 
+  const graphInfo = getGraphInfo(graph);
+
   const access = useAccess();
 
-  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT;
+  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT && graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
 
   const isLoading = !!loading;
 

@@ -2,8 +2,8 @@ import ROUTE_MAP from '@/routers/routeMap';
 import { deleteGraphDocument } from '@/services/common/ai/document';
 import { DeleteOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
-import { generatePath, Link } from '@umijs/max';
-import { Button, Divider, Input, Popconfirm, Space, Tag, Typography } from 'antd';
+import { generatePath, Link, useModel } from '@umijs/max';
+import { Button, Divider, FloatButton, Input, Popconfirm, Space, Tag, Typography } from 'antd';
 import classNames from 'classnames';
 import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import DocStatusTag from '../DocStatusTag';
@@ -13,6 +13,7 @@ import DocumentsClear from '../DocumentsClear';
 import { DocStatus } from '../enum';
 import styles from './index.less';
 import useHeaderHeight from '@/hooks/useHeaderHeight';
+import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
 const { Title, Paragraph, Text } = Typography;
 
 // 添加props类型
@@ -35,6 +36,9 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
   // 请求加载状态
   const [reqLoading, setReqLoading] = useState(false);
   const headerHeight = useHeaderHeight();
+  const { getGraphInfo } = useModel('graphList');
+  const graphInfo = getGraphInfo(graph);
+  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
 
   const handleDelete = async (document_id: string) => {
     setReqLoading(true);
@@ -93,6 +97,7 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
     {
       title: '序号',
       dataIndex: 'num',
+      width: 50,
       key: 'num',
     },
     {
@@ -112,49 +117,71 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
       },
     },
     {
-      title: '更新时间',
-      dataIndex: 'status',
-      width:150,
-      key: 'status',
-      render: (text,row) => {
-        return <span>{new Date(row.updated_at).toLocaleString()}</span>;
+      title: '长度',
+      dataIndex: 'content_length',
+      key: 'content_length',
+      width: 50,
+      render: (text) => {
+        return <span>{text}</span>
       },
     },
     {
-      title: '操作',
-      key: 'action',
-      width: 100,
-      render: (text, row) => {
-        return (
-          <div>
-            <Link
-              key={row.id + 'detail'}
-              title="详情"
-              to={{
-                pathname: generatePath(ROUTE_MAP.AI_DOCUMENT_DETAIL, {
-                  graph: graph || '',
-                  workspace: encodeURIComponent(workspace?.trim() || ''),
-                  document_id: row.id,
-                }),
-              }}
-            // target="_blank"
-            >
-              <EyeOutlined />
-            </Link>
-            <Popconfirm
-              key={row.id + 'delete'}
-              title="确定要删除该文档吗？"
-              onConfirm={() => {
-                handleDelete(row.id);
-              }}
-            >
-              <Button type="link" danger icon={<DeleteOutlined />} />
-            </Popconfirm>
-          </div>
-        );
+      title: '分块',
+      dataIndex: 'chunks_count',
+      key: 'chunks_count',
+      width: 50,
+      render: (text) => {
+        return <span>{text}</span>
       },
     },
+    {
+      title: '更新时间',
+      dataIndex: 'status',
+      width: 150,
+      key: 'status',
+      render: (text, row) => {
+        return <span>{new Date(row.updated_at).toLocaleString()}</span>;
+      },
+    }
   ];
+  if (canEdit) {
+    columns.push(
+      {
+        title: '操作',
+        key: 'action',
+        width: 100,
+        render: (text, row) => {
+          return (
+            <div>
+              <Link
+                key={row.id + 'detail'}
+                title="详情"
+                to={{
+                  pathname: generatePath(ROUTE_MAP.AI_DOCUMENT_DETAIL, {
+                    graph: graph || '',
+                    workspace: encodeURIComponent(workspace?.trim() || ''),
+                    document_id: row.id,
+                  }),
+                }}
+              // target="_blank"
+              >
+                <EyeOutlined />
+              </Link>
+              <Popconfirm
+                key={row.id + 'delete'}
+                title="确定要删除该文档吗？"
+                onConfirm={() => {
+                  handleDelete(row.id);
+                }}
+              >
+                <Button type="link" danger icon={<DeleteOutlined />} />
+              </Popconfirm>
+            </div>
+          );
+        },
+      }
+    )
+  }
 
   useEffect(() => {
     const documents = reDocumentList(dataList);
@@ -225,26 +252,27 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
             }}
             style={{ flex: 0 }}
           />
-          <DocumentsClear
-            graph={graph}
-            workspace={workspace}
-            refresh={() => {
-              refresh?.();
-            }}
-            loading={isLoading}
-            setLoading={setReqLoading}
-          />
+          {canEdit &&
+            <DocumentsClear
+              graph={graph}
+              workspace={workspace}
+              refresh={() => {
+                refresh?.();
+              }}
+              loading={isLoading}
+              setLoading={setReqLoading}
+            />
+          }
         </Space>
-        <Button
-          title="刷新"
+        <FloatButton
+          tooltip="刷新"
           className={styles.refreshButton}
           icon={<ReloadOutlined />}
           key="refresh"
           onClick={() => {
             refresh?.();
           }}
-          style={{ marginRight: 60 }}
-        ></Button>
+        ></FloatButton>
       </Space>
       <ProTable<any>
         className={styles.tableWrapper}
@@ -254,7 +282,7 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
         rowClassName={styles.rowItem}
         search={false}
         options={false}
-        showHeader={false}
+        // showHeader={false}
         // expandable={{
         //   columnWidth: 30,
         //   expandedRowKeys: expandedKeys,
