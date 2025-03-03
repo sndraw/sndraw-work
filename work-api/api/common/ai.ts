@@ -55,14 +55,14 @@ export const AI_LM_TYPE_MAP = {
 // 支持的知识图谱-MAP
 export const AI_GRAPH_PLATFORM_MAP = {
   lightrag: {
-    value: 'lightrag',
-    text: 'LightRAG'
+    value: 'LightRAG',
+    text: 'LightRAG',
   },
   lightrag_multi: {
-    value: 'lightrag_multi',
+    value: 'LightRAG_Multi',
     text: 'LightRAG_Multi',
   },
-}
+};
 
 // 支持的知识图谱-检索类型-MAP
 export enum AI_GRAPH_MODE_ENUM {
