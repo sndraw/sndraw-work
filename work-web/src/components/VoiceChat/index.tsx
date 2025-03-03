@@ -75,8 +75,11 @@ const VoiceChat: React.FC<VoiceChatProps> = (props) => {
       };
       setAudioBlobUrl(null); // 初始化音频URL为空
       mediaRecorderRef.current?.start();
-    } catch (err) {
-      console.error('无法访问麦克风：', err);
+    } catch (err:any) {
+      const msg = "无法访问麦克风"
+      setIsRecording(false);
+      message.error(msg);
+      console.error(`${msg}: ${err}`);
     } finally {
       // 完成加载状态
       setLoading(false);
