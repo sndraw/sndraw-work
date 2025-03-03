@@ -15,20 +15,7 @@
 - ### 用户管理
   - 用户注册和登录管理
   - 权限控制和角色管理
-
-
-## 目录结构
-```text
-- 根目录/
-  - docker-deploy/ 
-  - work-api/
-  - work-web/
-  - README.md
-```
-## 部署文档
-- [/work-api/README.md](./work-api/README.md)
-- [/work-web/README.md](./work-web/README.md)
-
+  
 ## 使用指南
 ### 知识图谱添加步骤
 > 1. 登录系统
