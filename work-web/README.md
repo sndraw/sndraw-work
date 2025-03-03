@@ -6,7 +6,10 @@
 **示例文件**：`.env.expample`
 
 ```
+# API接口-代理地址
 UMI_APP_PROXY_API=http://localhost:5001
+# MINIO接口-代理地址
+UMI_APP_PROXY_MINIOS_API=http://localhost:19000
 ```
 
 ### 2.安装全局依赖
