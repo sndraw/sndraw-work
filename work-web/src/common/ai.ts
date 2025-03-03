@@ -36,11 +36,11 @@ export const AI_LM_TYPE_MAP = {
 // 支持的知识图谱-MAP
 export const AI_GRAPH_PLATFORM_MAP = {
   lightrag: {
-    value: 'lightrag',
+    value: 'LightRAG',
     text: 'LightRAG',
   },
   lightrag_multi: {
-    value: 'lightrag_multi',
+    value: 'LightRAG_Multi',
     text: 'LightRAG_Multi',
   },
 };
