@@ -2,7 +2,7 @@ import ROUTE_MAP from '@/routers/routeMap';
 import { deleteGraphDocument } from '@/services/common/ai/document';
 import { DeleteOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
-import { generatePath, Link, useModel } from '@umijs/max';
+import { generatePath, Link, useAccess, useModel } from '@umijs/max';
 import { Button, Divider, FloatButton, Input, Popconfirm, Space, Tag, Typography } from 'antd';
 import classNames from 'classnames';
 import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -13,8 +13,6 @@ import DocumentsClear from '../DocumentsClear';
 import { DocStatus } from '../enum';
 import styles from './index.less';
 import useHeaderHeight from '@/hooks/useHeaderHeight';
-import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
-const { Title, Paragraph, Text } = Typography;
 
 // 添加props类型
 interface DocumentListProps {
@@ -38,7 +36,8 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
   const headerHeight = useHeaderHeight();
   const { getGraphInfo } = useModel('graphList');
   const graphInfo = getGraphInfo(graph);
-  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
+  const access = useAccess();
+  const canEdit= access.canSeeDev;
 
   const handleDelete = async (document_id: string) => {
     setReqLoading(true);

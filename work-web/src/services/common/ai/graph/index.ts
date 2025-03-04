@@ -126,7 +126,7 @@ export async function deleteGraphWorkspace(
 }
 
 /** GET /api/v1/ai/graph/:graph/workspace/:workspace/data */
-export async function getGraphData(
+export async function queryGraphData(
   params: {
     graph: string;
     workspace: string;
@@ -162,6 +162,30 @@ export async function getGraphNode(
   );
 }
 
+
+/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/node */
+export async function addGraphNode(
+  params: {
+    graph: string;
+    workspace: string;
+  },
+  body: API.AIGraphNodeVO,
+  options?: { [key: string]: any },
+) {
+  const { graph, workspace } = params;
+
+  return request<API.Result_AIGraphNode_>(
+    `/api/v1/ai/graph/${graph}/workspace/${workspace}/node`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}
 /** PUT /api/v1/ai/graph/:graph/workspace/:workspace/node/:node_id  */
 export async function updateGraphNode(
   params: {
@@ -210,39 +234,64 @@ export async function deleteGraphNode(
   );
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace/:workspace/link/${link_id} */
+/** GET /api/v1/ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
 export async function getGraphLink(
   params: {
     graph: string;
     workspace: string;
-    link_id: string;
+    source: string;
+    target: string;
   },
   options?: { [key: string]: any },
 ) {
-  const { graph, workspace, link_id } = params;
+  const { graph, workspace, source, target } = params;
   return request<API.Result_AIGraphLink_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${link_id}`,
+    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
     {
       method: 'GET',
       ...(options || {}),
     },
   );
 }
-
-/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/link/${link_id} */
-export async function updateGraphLink(
+/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/link*/
+export async function addGraphLink(
   params: {
     graph: string;
     workspace: string;
-    link_id: string;
   },
   body: API.AIGraphLinkVO,
   options?: { [key: string]: any },
 ) {
-  const { graph, workspace, link_id } = params;
+  const { graph, workspace } = params;
 
   return request<API.Result_AIGraphLink_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${link_id}`,
+    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}
+
+/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
+export async function updateGraphLink(
+  params: {
+    graph: string;
+    workspace: string;
+    source: string;
+    target: string;
+  },
+  body: API.AIGraphLinkVO,
+  options?: { [key: string]: any },
+) {
+  const { graph, workspace, source, target } = params;
+
+  return request<API.Result_AIGraphLink_>(
+    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
     {
       method: 'PUT',
       headers: {
@@ -254,19 +303,20 @@ export async function updateGraphLink(
   );
 }
 
-/** DELETE /api/v1/ai/graph/:graph/workspace/:workspace/link/${link_id} */
+/** DELETE /api/v1/ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
 export async function deleteGraphLink(
   params: {
     graph: string;
     workspace: string;
-    link_id: string;
+    source: string;
+    target: string;
   },
   options?: { [key: string]: any },
 ) {
-  const { graph, workspace, link_id } = params;
+  const { graph, workspace, source, target } = params;
 
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${link_id}`,
+    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
     {
       method: 'DELETE',
       headers: {

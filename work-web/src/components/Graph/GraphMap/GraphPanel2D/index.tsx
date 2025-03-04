@@ -243,8 +243,13 @@ const GraphPanel2D: React.FC<GraphPanel2DPropsType> = (
           });
         }}
         onNodeRightClick={(node) => {
-          // 处理节点右键点击事件，弹出操作列表
-          resetOperation();
+          // 处理节点右键点击事件，弹出节点关系添加
+          setOperation({
+            type: OperationTypeEnum.addLink,
+            link: {
+              source: node
+            },
+          });
         }}
         onLinkClick={(link, event) => {
           setOperation({

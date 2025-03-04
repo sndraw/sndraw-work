@@ -38,6 +38,11 @@ const routerList = [
         handler: AIGraphMultiController.getGraphNode,
     },
     {
+        path: routeMap.AI_GRAPH_MULTI_NODE,
+        method: "POST",
+        handler: AIGraphMultiController.createGraphNode,
+    },
+    {
         path: routeMap.AI_GRAPH_MULTI_NODE_DETAIL,
         method: "PUT",
         handler: AIGraphMultiController.updateGraphNode,
@@ -53,6 +58,11 @@ const routerList = [
         handler: AIGraphMultiController.getGraphLink,
     },
     {
+        path: routeMap.AI_GRAPH_MULTI_LINK,
+        method: "POST",
+        handler: AIGraphMultiController.createGraphLink,
+    },
+    {
         path: routeMap.AI_GRAPH_MULTI_LINK_DETAIL,
         method: "PUT",
         handler: AIGraphMultiController.updateGraphLink,
@@ -65,7 +75,7 @@ const routerList = [
     {
         path: routeMap.AI_GRAPH_MULTI_DATA,
         method: "GET",
-        handler: AIGraphMultiController.getGraphData,
+        handler: AIGraphMultiController.queryGraphData,
     },
     {
         path: routeMap.AI_GRAPH_MULTI_DATA_TEXT,

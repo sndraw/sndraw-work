@@ -17,13 +17,17 @@ const LinkDelete: React.FC<LinkDeleteProps> = (props) => {
 
   const handleDelete = async () => {
     setLoading(true);
-    // const linkId = link.id?.split("_")?.map((v: any) => v.replace(/^"|"$/g, ''))?.join("_");
-    // console.log(linkId)
-    await deleteGraphLink({
-      graph: graph,
-      workspace: workspace,
-      link_id: link.id,
-    })
+    await deleteGraphLink(
+      {
+        graph: graph,
+        workspace: workspace,
+        source: link?.source?.id || link?.source,
+        target: link?.target?.id || link?.target,
+      },
+      {
+        timout: 0
+      }
+    )
       .then((response) => {
         refresh?.();
       })

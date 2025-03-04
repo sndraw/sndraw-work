@@ -13,7 +13,6 @@ export const formatText = (
   const { splitChar = '<SEP>', joinChar = '\n' } = ops || {};
   const modifiedText = text
     ?.split(splitChar)
-    ?.map((v: any) => v.replace(/^"|"$/g, ''))
     ?.join(joinChar);
   return modifiedText;
 };

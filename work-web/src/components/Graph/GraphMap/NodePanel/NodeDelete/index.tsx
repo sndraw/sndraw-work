@@ -17,11 +17,16 @@ const NodeDelete: React.FC<NodeDeleteProps> = (props) => {
 
   const handleDelete = async () => {
     setLoading(true);
-    await deleteGraphNode({
-      graph: graph,
-      workspace: workspace,
-      node_id: node.id?.replace(/^"|"$/g, ''),
-    })
+    await deleteGraphNode(
+      {
+        graph: graph,
+        workspace: workspace,
+        node_id: node.id,
+      },
+      {
+        timout: 0
+      }
+    )
       .then((response) => {
         refresh?.();
       })

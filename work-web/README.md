@@ -2,9 +2,11 @@
 
 ## 开发环境
 
-### 1. 配置.env.local
+### 1、新建 env 文件并配置环境变量（如果部署时使用预设环境变量，请忽略该步骤）
 **示例文件**：`.env.expample`
 
+**示例如下（拷贝示例文件并修改为本地 env 文件）**  
+本地 env 文件：`.env.local`
 ```
 # API接口-代理地址
 UMI_APP_PROXY_API=http://localhost:5001

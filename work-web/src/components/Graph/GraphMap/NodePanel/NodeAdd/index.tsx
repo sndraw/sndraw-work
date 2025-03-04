@@ -1,31 +1,44 @@
-import { updateGraphNode } from '@/services/common/ai/graph';
+import { addGraphNode } from '@/services/common/ai/graph';
+import { OperationTypeEnum } from '@/types';
 import { EditOutlined } from '@ant-design/icons';
 import {
-  ModalForm,
+  DrawerForm,
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Button, Form } from 'antd';
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-interface NodeEditProps {
+interface NodeAddProps {
   graph: string;
   workspace: string;
-  node: any;
   refresh?: () => void;
-  disabled: boolean;
+  disabled?: boolean;
   className?: string;
 }
 
-const NodeEdit: React.FC<NodeEditProps> = (props) => {
-  const { graph, workspace, node, refresh, disabled, className } = props;
+const NodeAdd: React.FC<NodeAddProps> = (props) => {
+  const { graph, workspace, refresh, disabled, className } = props;
   const [form] = Form.useForm<API.AIGraphNodeVO>();
   // 操作状态管理
-  const { operation, setOperation } = useModel('graphOperation');
+  const { operation, setOperation, resetOperation } = useModel('graphOperation');
+  // 状态管理
+  const [visible, setVisible] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const node = operation?.node;
+
+  // 打开弹窗
+  useEffect(() => {
+    if (operation?.type !== OperationTypeEnum.addNode) {
+      setVisible(false);
+      return;
+    }
+    setVisible(true);
+    // run();
+  }, [operation]);
 
   const getDefaultValues = (node: API.AIGraphNodeVO) => {
     return {
@@ -36,14 +49,13 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
     };
   };
 
-  const handleEdit = async (values: any) => {
+  const handleAdd = async (values: any) => {
     setLoading(true);
     try {
-      await updateGraphNode(
+      await addGraphNode(
         {
           graph: graph,
-          workspace: workspace,
-          node_id: node.id,
+          workspace: workspace
         },
         {
           entity_name: values?.id,
@@ -72,25 +84,17 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
 
   const isDisabled = disabled || loading;
   return (
-    <ModalForm
-      title={`编辑节点`}
-      trigger={
-        <Button
-          key={node?.id || 'edit'}
-          className={classNames(className)}
-          title="编辑节点"
-          icon={<EditOutlined />}
-          type="text"
-          loading={loading}
-          disabled={isDisabled}
-        ></Button>
-      }
-      modalProps={{ destroyOnClose: true }}
+    <DrawerForm
+      title={`添加节点`}
+      open={visible}
+      drawerProps={{ destroyOnClose: true, mask: true }}
+      width={"378px"}
       disabled={isDisabled}
       form={form}
       onOpenChange={(open) => {
         if (!open) {
-          // form.resetFields();
+          resetOperation();
+          form.resetFields();
         } else {
           form.setFieldsValue(getDefaultValues(node));
         }
@@ -100,10 +104,11 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
         if (!validate) {
           return false;
         }
-        const isSuccess = await handleEdit(values);
+        const isSuccess = await handleAdd(values);
         if (!isSuccess) {
           return false;
         }
+        resetOperation();
         refresh?.();
         return true;
       }}
@@ -177,8 +182,8 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
         ]}
         placeholder="请输入来源ID"
       />
-    </ModalForm>
+    </DrawerForm>
   );
 };
 
-export default NodeEdit;
+export default NodeAdd;

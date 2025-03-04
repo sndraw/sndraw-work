@@ -255,6 +255,17 @@ export default {
             USER_ROLE_ENUM.OPS
         ]
     },
+    AI_GRAPH_MULTI_NODE: {
+        GET: [
+            USER_ROLE_ENUM.USER,
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+        POST: [
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+    },
     AI_GRAPH_MULTI_NODE_DETAIL: {
         GET: [
             USER_ROLE_ENUM.USER,
@@ -266,6 +277,17 @@ export default {
             USER_ROLE_ENUM.OPS
         ],
         DELETE: [
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+    },
+    AI_GRAPH_MULTI_LINK: {
+        GET: [
+            USER_ROLE_ENUM.USER,
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+        POST: [
             USER_ROLE_ENUM.DEV,
             USER_ROLE_ENUM.OPS
         ],

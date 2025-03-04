@@ -40,7 +40,7 @@ class AIGraphMultiController extends BaseController {
         const { graph } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             // 查询平台
             const result = await AIPlatformService.findAIPlatformByIdOrName(graph);
@@ -65,7 +65,7 @@ class AIGraphMultiController extends BaseController {
         const { graph } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             // 查询平台
             const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
@@ -112,7 +112,7 @@ class AIGraphMultiController extends BaseController {
         const { graph, workspace } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             // 查询平台
             const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
@@ -173,7 +173,7 @@ class AIGraphMultiController extends BaseController {
         })
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             // 查询平台
             const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
@@ -227,7 +227,7 @@ class AIGraphMultiController extends BaseController {
         })
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             // 查询平台
             const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
@@ -267,7 +267,7 @@ class AIGraphMultiController extends BaseController {
         const { graph, workspace } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             // 查询平台
             const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
@@ -296,11 +296,11 @@ class AIGraphMultiController extends BaseController {
         }
     }
 
-    static async getGraphData(ctx: Context) {
-        const { graph, workspace } = ctx.params;
+    static async queryGraphData(ctx: Context) {
+        const { graph, workspace, label = "*", max_depth = 99 } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             // 查询平台
             const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
@@ -312,7 +312,8 @@ class AIGraphMultiController extends BaseController {
             }
 
             // 请求host，获取知识图谱数据
-            const result: any = await new LightragAPI(graphInfo?.toJSON()).getGraphData(workspace);
+            const result: any = await new LightragAPI(graphInfo?.toJSON()).queryGraphData(label, max_depth, workspace);
+
 
             ctx.status = 200;
             ctx.body = resultSuccess({
@@ -335,7 +336,7 @@ class AIGraphMultiController extends BaseController {
         const { graph, workspace, node_id } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             if (!node_id) {
@@ -369,6 +370,55 @@ class AIGraphMultiController extends BaseController {
             });
         }
     }
+    // 添加节点
+    static async createGraphNode(ctx: Context) {
+        const { graph, workspace } = ctx.params;
+        const node_data: any = ctx.request.body || {};
+
+        try {
+            const { entity_name, ...data } = node_data;
+
+            if (!graph) {
+                throw new Error("图谱ID参数错误");
+            }
+
+            if (!entity_name) {
+                throw new Error("节点ID参数错误");
+            }
+
+            if (!data) {
+                throw new Error("节点数据参数错误");
+            }
+
+            // 查询平台
+            const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
+                safe: false
+            });
+            if (!graphInfo) {
+                throw new Error("知识图谱不存在");
+            }
+            // 请求host，添加节点关系
+            const result: any = await new LightragAPI(graphInfo?.toJSON()).createGrapNode({
+                entity_name, node_data: data
+            }, workspace);
+
+            ctx.status = 200;
+            ctx.body = resultSuccess({
+                data: result?.data
+            });
+
+
+        } catch (e) {
+            // 异常处理，返回错误信息
+            ctx.logger.error("添加节点关系异常", e); // 记录错误日志
+            ctx.status = 500;
+            const error: any = e;
+            ctx.body = resultError({
+                code: error?.code,
+                message: error?.message || error,
+            });
+        }
+    }
 
     // 修改节点信息
     static async updateGraphNode(ctx: Context) {
@@ -377,7 +427,7 @@ class AIGraphMultiController extends BaseController {
 
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
             if (!node_id) { // 节点ID参数错误
                 throw new Error("节点ID参数错误");
@@ -419,7 +469,7 @@ class AIGraphMultiController extends BaseController {
         const { graph, workspace, node_id } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             if (!node_id) {
@@ -455,20 +505,14 @@ class AIGraphMultiController extends BaseController {
     }
     // 查询节点关系
     static async getGraphLink(ctx: Context) {
-        const { graph, workspace, link_id } = ctx.params;
+        const { graph, workspace, source, target } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
-            if (!link_id) {
-                throw new Error("节点关系ID参数错误");
-            }
-            const link_ids = link_id.split("_");
-            const src_entity_name = link_ids?.[0];
-            const tgt_entity_name = link_ids?.[1];
-            if (!src_entity_name || !tgt_entity_name) {
-                throw new Error("节点关系ID参数错误");
+            if (!source || !target) {
+                throw new Error("节点关系参数错误");
             }
 
             // 查询平台
@@ -480,17 +524,17 @@ class AIGraphMultiController extends BaseController {
                 throw new Error("知识图谱不存在");
             }
             // 请求host，获取知识图谱数据
-            const result: any = await new LightragAPI(graphInfo?.toJSON()).getGraphLink(link_id, workspace);
+            const result: any = await new LightragAPI(graphInfo?.toJSON()).getGraphLink(source, target, workspace);
 
             const graphLink = result?.data || {}
 
             ctx.status = 200;
             ctx.body = resultSuccess({
                 data: {
-                    graph: link_id,
+                    graph,
                     ...graphLink,
-                    source: src_entity_name,
-                    target: tgt_entity_name
+                    source: source,
+                    target: target
                 }
             });
 
@@ -505,19 +549,67 @@ class AIGraphMultiController extends BaseController {
             });
         }
     }
+    // 添加节点关系
+    static async createGraphLink(ctx: Context) {
+        const { graph, workspace } = ctx.params;
+        const link_data: any = ctx.request.body || {};
+
+        try {
+            const { source, target, ...data } = link_data;
+            if (!graph) {
+                throw new Error("图谱ID参数错误");
+            }
+            if (!source || !target) {
+                throw new Error("节点关系参数错误");
+            }
+
+            if (!data) {
+                throw new Error("节点关系数据参数错误");
+            }
+
+            // 查询平台
+            const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
+                safe: false
+            });
+            if (!graphInfo) {
+                throw new Error("知识图谱不存在");
+            }
+
+            // 请求host，添加节点关系
+            const result: any = await new LightragAPI(graphInfo?.toJSON()).createGraphLink({
+                src_entity_name: source, tgt_entity_name: target, link_data: data
+            }, workspace);
+
+            ctx.status = 200;
+            ctx.body = resultSuccess({
+                data: result?.data
+            });
+
+        } catch (e) {
+            // 异常处理，返回错误信息
+            ctx.logger.error("添加节点关系异常", e); // 记录错误日志
+            ctx.status = 500;
+            const error: any = e;
+            ctx.body = resultError({
+                code: error?.code,
+                message: error?.message || error,
+            });
+        }
+    }
 
     // 修改节点关系
     static async updateGraphLink(ctx: Context) {
-        const { graph, workspace, link_id } = ctx.params;
+        const { graph, workspace, source, target } = ctx.params;
         const link_data = ctx.request.body;
 
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
-            if (!link_id) {
-                throw new Error("节点关系ID参数错误");
+            if (!source || !target) {
+                throw new Error("节点关系参数错误");
             }
+
             if (!link_data) {
                 throw new Error("节点关系数据参数错误");
             }
@@ -531,7 +623,7 @@ class AIGraphMultiController extends BaseController {
             }
 
             // 请求host，更新节点关系
-            const result: any = await new LightragAPI(graphInfo?.toJSON()).updateGraphLink(link_id, link_data, workspace);
+            const result: any = await new LightragAPI(graphInfo?.toJSON()).updateGraphLink(source, target, link_data, workspace);
 
             ctx.status = 200;
             ctx.body = resultSuccess({
@@ -553,15 +645,16 @@ class AIGraphMultiController extends BaseController {
 
     // 删除节点关系
     static async deleteGraphLink(ctx: Context) {
-        const { graph, workspace, link_id } = ctx.params;
+        const { graph, workspace, source, target } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
-            if (!link_id) {
-                throw new Error("节点关系ID参数错误");
+            if (!source || !target) {
+                throw new Error("节点关系参数错误");
             }
+
             // 查询平台
             const graphInfo: any = await AIPlatformService.findAIPlatformByIdOrName(graph, {
                 safe: false
@@ -572,7 +665,7 @@ class AIGraphMultiController extends BaseController {
             }
 
             // 删除节点关系
-            const result: any = await new LightragAPI(graphInfo?.toJSON()).deleteGraphLink(link_id, workspace);
+            const result: any = await new LightragAPI(graphInfo?.toJSON()).deleteGraphLink(source, target, workspace);
             ctx.status = 200;
             ctx.body = resultSuccess({
                 data: result?.data
@@ -642,7 +735,7 @@ class AIGraphMultiController extends BaseController {
 
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             if (!text) {
@@ -735,7 +828,7 @@ class AIGraphMultiController extends BaseController {
         let files: any;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             if (!ctx.request?.files) {
@@ -833,7 +926,7 @@ class AIGraphMultiController extends BaseController {
         const { graph, workspace } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             // 查询平台
@@ -868,7 +961,7 @@ class AIGraphMultiController extends BaseController {
         const { graph, workspace } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             // 查询平台
@@ -900,7 +993,7 @@ class AIGraphMultiController extends BaseController {
         const { graph, workspace, document_id } = ctx.params;
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             if (!document_id) {
@@ -938,7 +1031,7 @@ class AIGraphMultiController extends BaseController {
 
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             if (!document_id) {
@@ -1059,7 +1152,7 @@ class AIGraphMultiController extends BaseController {
         let responseText: any = '';
         try {
             if (!graph) {
-                throw new Error("ID参数错误");
+                throw new Error("图谱ID参数错误");
             }
 
             // 查询平台

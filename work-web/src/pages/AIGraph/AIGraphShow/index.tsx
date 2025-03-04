@@ -1,7 +1,7 @@
 import GraphDisplay from '@/components/Graph/GraphDisplay';
 import { MODE_ENUM } from '@/constants/DataMap';
 import Page404 from '@/pages/404';
-import { getGraphData } from '@/services/common/ai/graph';
+import { queryGraphData } from '@/services/common/ai/graph';
 import { useParams, useRequest } from '@umijs/max';
 import { useEffect } from 'react';
 import styles from './index.less';
@@ -11,7 +11,7 @@ const AIGraphShowPage: React.FC = () => {
   // 模型数据-请求
   const { data, loading, run } = useRequest(
     () => {
-      return getGraphData({
+      return queryGraphData({
         graph: graph || '',
         workspace: workspace || '',
       });
