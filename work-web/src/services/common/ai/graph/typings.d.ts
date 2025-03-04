@@ -73,6 +73,7 @@ declare namespace API {
   interface AIGraphNodeVO {
     id?: string;
     label?: string;
+    entity_name?: string;
     entity_type: string;
     description: string;
     source_id: string;

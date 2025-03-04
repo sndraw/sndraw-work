@@ -46,6 +46,7 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
           node_id: node.id?.replace(/^"|"$/g, ''),
         },
         {
+          entity_name: values?.id,
           entity_type: values?.entity_type,
           description: values?.description,
           source_id: node?.source_id,
@@ -109,7 +110,7 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
         rules={[
           {
             required: true,
-            message: '请输ID',
+            message: '请输入ID',
           },
           {
             min: 1,
@@ -118,7 +119,6 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
           },
         ]}
         placeholder="请输入ID"
-        disabled={true}
       />
       <ProFormText
         name="entity_type"

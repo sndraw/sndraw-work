@@ -170,8 +170,8 @@ export default class LightragAPI {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
                 const result: any = await request(`${this.host}/graphs`, {
                     method: 'GET',
-                    params:{
-                        label:"*"
+                    params: {
+                        label: "*"
                     },
                     headers: {
                         'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ export default class LightragAPI {
                 if (!result) {
                     throw new Error(result?.message);
                 }
-                const nodes = result?.nodes?.map((node: any) =>{
+                const nodes = result?.nodes?.map((node: any) => {
                     return {
                         id: node.id,
                         label: node?.labels?.join(","),
@@ -191,7 +191,7 @@ export default class LightragAPI {
                     }
                 })
 
-                const edges = result?.edges?.map((edge: any) =>{
+                const edges = result?.edges?.map((edge: any) => {
                     return {
                         id: edge.id,
                         source: edge.source,
@@ -452,22 +452,7 @@ export default class LightragAPI {
 
     async insertFile(formData: FormData, workspace?: string) {
         try {
-            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                const result: any = await request(`${this.host}/documents/file_batch`, {
-                    method: 'POST',
-                    headers: {
-                        ...(formData?.getHeaders() || {}),
-                        'X-API-Key': this.apiKey,
-                    },
-                    data: formData,
-                    timeout: 0
-                });
-                if (result?.code !== 0 && result?.status !== "success") {
-                    throw new Error(result.message);
-                }
-                return result;
-            }
-            const result: any = await request(`${this.host}/documents/batch`, {
+            const result: any = await request(`${this.host}/documents/file_batch`, {
                 method: 'POST',
                 headers: {
                     ...(formData?.getHeaders() || {}),
@@ -512,29 +497,7 @@ export default class LightragAPI {
     async queryGraphDocumentList(workspace?: string) {
 
         try {
-            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                const result: any = await request(`${this.host}/documents`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-Key': this.apiKey
-                    }
-                });
-                if (!result?.statuses) {
-                    throw new Error(result.message);
-                }
-                let data: any[] = []
-                for (const statuse of Object.entries(result.statuses)) {
-                    const list = statuse?.[1] || []
-                    if (Array.isArray(list)) {
-                        data = [...data, ...list]
-                    }
-                }
-                return {
-                    data: data,
-                };
-            }
-            const result: any = await request(`${this.host}/graph/document`, {
+            const result: any = await request(`${this.host}/documents`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -542,10 +505,19 @@ export default class LightragAPI {
                     'X-Workspace': encodeURIComponent(workspace || ""),
                 }
             });
-            if (result?.code !== 0 && result?.status !== "success") {
+            if (!result?.statuses) {
                 throw new Error(result.message);
             }
-            return result;
+            let data: any[] = []
+            for (const statuse of Object.entries(result.statuses)) {
+                const list = statuse?.[1] || []
+                if (Array.isArray(list)) {
+                    data = [...data, ...list]
+                }
+            }
+            return {
+                data: data,
+            };
 
         } catch (error: any) {
             const errMessage = error?.response?.data?.detail || error
@@ -555,7 +527,7 @@ export default class LightragAPI {
     }
     async getGraphDocument(document_id: string, workspace?: string) {
         try {
-            const result: any = await request(`${this.host}/graph/document/${document_id}`, {
+            const result: any = await request(`${this.host}/document/${document_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
