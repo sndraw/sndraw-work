@@ -59,7 +59,6 @@ docker login -u username <IP:port>/<repository>
 
 ```
 make build-push-all REGISTRY_URL=<IP:port>/<repository> IMAGE_NAME=work-api IMAGE_VERISON=1.0.0
-
 ```
 
 
