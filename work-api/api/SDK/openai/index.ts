@@ -98,7 +98,7 @@ class OpenAIApi {
             temperature: temperature,
             top_p: top_p,
             n: 1,
-            max_tokens: max_tokens || 1024,
+            max_tokens: max_tokens,
         });
         return completion
     }
@@ -128,7 +128,7 @@ class OpenAIApi {
             temperature: temperature,
             top_p: 0.8,
             n: 1,
-            max_tokens: max_tokens || 1024,
+            max_tokens: max_tokens
         });
         return completion
     }
