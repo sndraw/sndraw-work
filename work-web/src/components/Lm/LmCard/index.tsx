@@ -52,10 +52,11 @@ const LmCard: React.FC<LmCardPropsType> = (props: LmCardPropsType) => {
   const { mode, item, refresh, runItem, deleteItem, className } = props;
   // 权限
   const access = useAccess();
+  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT;
+
   // 主题
   const { token } = useToken();
   const [loading, setLoading] = useState(false);
-  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT;
   /**
    * 修改模型状态
    * @param fields

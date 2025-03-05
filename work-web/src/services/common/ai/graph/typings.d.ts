@@ -73,6 +73,7 @@ declare namespace API {
   interface AIGraphNodeVO {
     id?: string;
     label?: string;
+    entity_name?: string;
     entity_type: string;
     description: string;
     source_id: string;
@@ -80,22 +81,22 @@ declare namespace API {
 
   interface AIGraphLink {
     id: string;
+    source: string;
+    target: string;
     weight: number;
     keywords: string;
     description: string;
-    source: string;
-    target: string;
     source_id: string;
   }
 
   interface AIGraphLinkVO {
     id?: string;
-    weight: number;
-    keywords: string;
-    description: string;
-    source?: string;
-    target?: string;
-    source_id: string;
+    source?: any;
+    target?: any;
+    weight?: number;
+    keywords?: string;
+    description?: string;
+    source_id?: string;
   }
 
   interface AIGraphData {

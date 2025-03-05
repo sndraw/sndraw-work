@@ -1,46 +1,34 @@
 import { OperationTypeEnum } from '@/types';
 import { ProFormInstance } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
+import { useAccess, useModel } from '@umijs/max';
 import { Drawer, Empty, Flex, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { formatText } from '../utils';
 import styles from './index.less';
 import NodeDelete from './NodeDelete';
 import NodeEdit from './NodeEdit';
-import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
+import LinkAdd from '../LinkPanel/LinkAdd';
 
 // 添加props类型
 interface NodePanelProps {
   graph: string;
+  graphData: API.AIGraphData;
   workspace: string;
   onClose?: () => void;
   refresh?: () => void;
 }
 
 const NodePanel: React.FC<NodePanelProps> = (props) => {
-  const { graph, workspace, onClose, refresh } = props;
-  const formRef = useRef<ProFormInstance>();
+  const { graph, graphData, workspace, onClose, refresh } = props;
 
   // 状态管理
   const [visible, setVisible] = useState(false);
   // 操作状态管理
   const { operation, resetOperation } = useModel('graphOperation');
-  // // 查询节点
-  // // 知识图谱列表-请求
-  // const { data, loading, run } = useRequest(
-  //   () =>
-  //     getGraphNode({
-  //       graph: graph,
-  //       node_id: operation?.node?.id || '',
-  //     }),
-  //   {
-  //     manual: true,
-  //   },
-  // );
   const [loading, setLoading] = useState(false);
-  const { getGraphInfo } = useModel('graphList');
-  const graphInfo = getGraphInfo(graph);
-  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
+  // 权限
+  const access = useAccess();
+  const canEdit = access.canSeeDev;
   const data = operation?.node;
   // 打开抽屉
   useEffect(() => {
@@ -74,17 +62,19 @@ const NodePanel: React.FC<NodePanelProps> = (props) => {
             <Flex gap={16} wrap align="center" justify="end">
               {/* 编辑 */}
               <NodeEdit
+                key={"edit" + operation?.node?.id}
                 graph={graph}
                 workspace={workspace}
                 node={data}
                 refresh={() => {
-                  // setVisible(false);
+                  setVisible(false);
                   refresh?.();
                 }}
                 disabled={loading}
               />
               {/* 删除 */}
               <NodeDelete
+                key={"delete" + operation?.node?.id}
                 graph={graph}
                 workspace={workspace}
                 node={data}
@@ -105,15 +95,15 @@ const NodePanel: React.FC<NodePanelProps> = (props) => {
           <div className={styles?.nodeInfo}>
             {/* 节点信息展示 */}
             <p className={styles?.nodeInfoItem}>
-              <label className={styles?.nodeLabel}>ID：</label>
+              <label className={styles?.nodeLabel}>节点：</label>
               <span>{formatText(operation?.node?.id)}</span>
             </p>
-            {data?.label && (
+            {/* {data?.label && (
               <p className={styles?.nodeInfoItem}>
                 <label className={styles?.nodeLabel}>标签：</label>
                 <span>{formatText(data?.label)}</span>
               </p>
-            )}
+            )} */}
             {/* 其他信息展示 */}
             <p className={styles?.nodeInfoItem}>
               <label className={styles?.nodeLabel}>类型：</label>

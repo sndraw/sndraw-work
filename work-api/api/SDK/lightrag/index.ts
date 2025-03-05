@@ -47,7 +47,7 @@ export default class LightragAPI {
                 },
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -75,7 +75,7 @@ export default class LightragAPI {
                 },
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -103,7 +103,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -114,7 +114,6 @@ export default class LightragAPI {
     }
     async updateGraphWorkspace(workspace: string, data: {
         name: string
-
     }) {
         const { name } = data;
         try {
@@ -132,7 +131,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -155,7 +154,7 @@ export default class LightragAPI {
                 },
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -165,64 +164,54 @@ export default class LightragAPI {
         }
     }
 
-    async getGraphData(workspace?: string) {
+    async queryGraphData(label = "*", max_depth = 99, workspace?: string) {
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                const result: any = await request(`${this.host}/graphs`, {
-                    method: 'GET',
-                    params:{
-                        label:"*"
-                    },
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-Key': this.apiKey
-                    },
-                });
-                if (!result) {
-                    throw new Error(result?.message);
-                }
-                const nodes = result?.nodes?.map((node: any) =>{
-                    return {
-                        id: node.id,
-                        label: node?.labels?.join(","),
-                        entity_type: node?.properties?.entity_type,
-                        description: node?.properties?.description,
-                        source_id: node?.properties?.source_id,
-                    }
-                })
-
-                const edges = result?.edges?.map((edge: any) =>{
-                    return {
-                        id: edge.id,
-                        source: edge.source,
-                        target: edge.target,
-                        weight: edge?.properties?.weight,
-                        keywords: edge?.properties?.keywords,
-                        description: edge?.properties?.description,
-                        source_id: edge?.properties?.source_id,
-                    }
-                })
-
-                return {
-                    data: {
-                        nodes,
-                        edges,
-                    }
-                };
-
+                workspace = ""
             }
-            const result: any = await request(`${this.host}/graph/data`, {
+            const result: any = await request(`${this.host}/graphs`, {
                 method: 'GET',
+                params: {
+                    label,
+                    max_depth
+                },
                 headers: {
                     'Content-Type': 'application/json',
                     'X-API-Key': this.apiKey,
-                    'X-Workspace': encodeURIComponent(workspace || ""),
+                    'X-Workspace': encodeURIComponent(workspace || "")
                 },
             });
-            if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+            if (!result) {
+                throw new Error(result?.message);
             }
-            return result;
+            const nodes = result?.nodes?.map((node: any) => {
+                return {
+                    id: node.id,
+                    label: node?.labels?.join(","),
+                    entity_type: node?.properties?.entity_type,
+                    description: node?.properties?.description,
+                    source_id: node?.properties?.source_id,
+                }
+            })
+
+            const edges = result?.edges?.map((edge: any) => {
+                return {
+                    id: edge.id,
+                    source: edge.source,
+                    target: edge.target,
+                    weight: edge?.properties?.weight,
+                    keywords: edge?.properties?.keywords,
+                    description: edge?.properties?.description,
+                    source_id: edge?.properties?.source_id,
+                }
+            })
+
+            return {
+                data: {
+                    nodes,
+                    edges,
+                }
+            };
         } catch (error: any) {
             const errMessage = error?.response?.data?.detail || error
             console.error('Error fetching graph data:', errMessage);
@@ -233,7 +222,7 @@ export default class LightragAPI {
     async getGraphNode(node_id: string, workspace?: string) {
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                throw new Error("该接口类型不支持此操作");
+                workspace = ""
             }
             const result: any = await request(`${this.host}/graph/entity/${encodeURIComponent(node_id)}`, {
                 method: 'GET',
@@ -244,7 +233,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -253,11 +242,44 @@ export default class LightragAPI {
             throw new Error(errMessage);
         }
     }
-
+    async createGrapNode(data: {
+        entity_name: string,
+        node_data: any
+    }, workspace?: string) {
+        const { entity_name, node_data } = data;
+        try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                workspace = ""
+            }
+            if (!node_data) {
+                throw new Error("节点数据参数错误");
+            }
+            const result: any = await request(`${this.host}/graph/entity`, {
+                method: 'POST',
+                params: {
+                    entity_name: entity_name, // 假设节点名称在node_data中
+                },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-API-Key': this.apiKey,
+                    'X-Workspace': encodeURIComponent(workspace || ""),
+                },
+                data: node_data
+            });
+            if (result?.code !== 0 && result?.status !== "success") {
+                throw new Error(result?.message);
+            }
+            return result;
+        } catch (error: any) {
+            const errMessage = error?.response?.data?.detail || error
+            console.error('Error creating node:', errMessage);
+            throw new Error(errMessage);
+        }
+    }
     async updateGraphNode(node_id: string, node_data: any, workspace?: string) {
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                throw new Error("该接口类型不支持此操作");
+                workspace = ""
             }
             if (!node_id) {
                 throw new Error("节点ID参数错误");
@@ -276,7 +298,7 @@ export default class LightragAPI {
                 data: node_data
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -290,7 +312,7 @@ export default class LightragAPI {
     async deleteGraphNode(node_id: string, workspace?: string) {
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                throw new Error("该接口类型不支持此操作");
+                workspace = ""
             }
             const result: any = await request(`${this.host}/graph/entity/${encodeURIComponent(node_id)}`, {
                 method: 'DELETE',
@@ -301,7 +323,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -311,14 +333,11 @@ export default class LightragAPI {
         }
     }
 
-    async getGraphLink(link_id: string, workspace?: string) {
+    async getGraphLink(src_entity_name: string, tgt_entity_name: string, workspace?: string) {
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                throw new Error("该接口类型不支持此操作");
+                workspace = ""
             }
-            const link_ids = link_id.split("_");
-            const src_entity_name = link_ids[0];
-            const tgt_entity_name = link_ids[1];
             if (!src_entity_name || !tgt_entity_name) {
                 throw new Error("节点关系ID参数错误");
             }
@@ -335,7 +354,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -345,15 +364,48 @@ export default class LightragAPI {
         }
     }
 
-
-    async updateGraphLink(link_id: string, link_data: any, workspace?: string) {
+    async createGraphLink(data: {
+        src_entity_name: string, tgt_entity_name: string, link_data: any
+    }, workspace?: string) {
+        const { src_entity_name, tgt_entity_name, link_data } = data;
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                throw new Error("该接口类型不支持此操作");
+                workspace = ""
             }
-            const link_ids = link_id.split("_");
-            const src_entity_name = link_ids[0];
-            const tgt_entity_name = link_ids[1];
+            if (!src_entity_name || !tgt_entity_name) {
+                throw new Error("节点关系ID参数错误");
+            }
+            if (!link_data) {
+                throw new Error("关系数据参数错误");
+            }
+            const result: any = await request(`${this.host}/graph/relation/by_nodes`, {
+                method: 'POST',
+                params: {
+                    src_entity_name,
+                    tgt_entity_name
+                },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-API-Key': this.apiKey,
+                    'X-Workspace': encodeURIComponent(workspace || ""),
+                },
+                data: link_data
+            });
+            if (result?.code !== 0 && result?.status !== "success") {
+                throw new Error(result?.message);
+            }
+            return result;
+        } catch (error: any) {
+            const errMessage = error?.response?.data?.detail || error
+            console.error('Error creating node:', errMessage);
+            throw new Error(errMessage);
+        }
+    }
+    async updateGraphLink(src_entity_name: string, tgt_entity_name: string, link_data: any, workspace?: string) {
+        try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                workspace = ""
+            }
             if (!src_entity_name || !tgt_entity_name) {
                 throw new Error("节点关系ID参数错误");
             }
@@ -374,7 +426,7 @@ export default class LightragAPI {
                 data: link_data
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -384,16 +436,10 @@ export default class LightragAPI {
         }
     }
 
-    async deleteGraphLink(link_id: string, workspace?: string) {
+    async deleteGraphLink(src_entity_name: string, tgt_entity_name: string, workspace?: string) {
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                throw new Error("该接口类型不支持此操作");
-            }
-            const link_ids = link_id.split("_");
-            const src_entity_name = link_ids[0];
-            const tgt_entity_name = link_ids[1];
-            if (!src_entity_name || !tgt_entity_name) {
-                throw new Error("节点关系ID参数错误");
+                workspace = ""
             }
             const result: any = await request(`${this.host}/graph/relation/by_nodes`, {
                 method: 'DELETE',
@@ -408,7 +454,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -424,6 +470,9 @@ export default class LightragAPI {
         split_by_character_only?: boolean;
     }, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                workspace = ""
+            }
             const { text, split_by_character, split_by_character_only } = data;
             const result: any = await request(`${this.host}/documents/text`, {
                 method: 'POST',
@@ -440,7 +489,7 @@ export default class LightragAPI {
                 timeout: 0
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
         } catch (error: any) {
@@ -453,21 +502,9 @@ export default class LightragAPI {
     async insertFile(formData: FormData, workspace?: string) {
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                const result: any = await request(`${this.host}/documents/file_batch`, {
-                    method: 'POST',
-                    headers: {
-                        ...(formData?.getHeaders() || {}),
-                        'X-API-Key': this.apiKey,
-                    },
-                    data: formData,
-                    timeout: 0
-                });
-                if (result?.code !== 0 && result?.status !== "success") {
-                    throw new Error(result.message);
-                }
-                return result;
+                workspace = ""
             }
-            const result: any = await request(`${this.host}/documents/batch`, {
+            const result: any = await request(`${this.host}/documents/file_batch`, {
                 method: 'POST',
                 headers: {
                     ...(formData?.getHeaders() || {}),
@@ -478,7 +515,7 @@ export default class LightragAPI {
                 timeout: 0
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
         } catch (error: any) {
             const errMessage = error?.response?.data?.detail || error
@@ -489,6 +526,9 @@ export default class LightragAPI {
 
     async clearGraphData(workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                workspace = ""
+            }
             const result: any = await request(`${this.host}/documents/all`, {
                 method: 'DELETE',
                 headers: {
@@ -498,7 +538,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
 
@@ -513,28 +553,9 @@ export default class LightragAPI {
 
         try {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
-                const result: any = await request(`${this.host}/documents`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-Key': this.apiKey
-                    }
-                });
-                if (!result?.statuses) {
-                    throw new Error(result.message);
-                }
-                let data: any[] = []
-                for (const statuse of Object.entries(result.statuses)) {
-                    const list = statuse?.[1] || []
-                    if (Array.isArray(list)) {
-                        data = [...data, ...list]
-                    }
-                }
-                return {
-                    data: data,
-                };
+                workspace = ""
             }
-            const result: any = await request(`${this.host}/graph/document`, {
+            const result: any = await request(`${this.host}/documents`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -542,10 +563,25 @@ export default class LightragAPI {
                     'X-Workspace': encodeURIComponent(workspace || ""),
                 }
             });
-            if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+            if (!result?.statuses && !result.data) {
+                throw new Error(result?.message);
             }
-            return result;
+            let data: any[] = []
+
+            if (result?.statuses) {
+                for (const statuse of Object.entries(result.statuses)) {
+                    const list = statuse?.[1] || []
+                    if (Array.isArray(list)) {
+                        data = [...data, ...list]
+                    }
+                }
+            }
+            if (result?.data) {
+                data = result?.data
+            }
+            return {
+                data: data,
+            };
 
         } catch (error: any) {
             const errMessage = error?.response?.data?.detail || error
@@ -555,7 +591,10 @@ export default class LightragAPI {
     }
     async getGraphDocument(document_id: string, workspace?: string) {
         try {
-            const result: any = await request(`${this.host}/graph/document/${document_id}`, {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                workspace = ""
+            }
+            const result: any = await request(`${this.host}/documents/${document_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -564,7 +603,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
 
@@ -576,6 +615,9 @@ export default class LightragAPI {
     }
     async deleteGraphDocument(document_id: string, workspace?: string) {
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                workspace = ""
+            }
             const result: any = await request(`${this.host}/documents/${document_id}`, {
                 method: 'DELETE',
                 headers: {
@@ -585,7 +627,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result.message);
+                throw new Error(result?.message);
             }
             return result;
 
@@ -599,6 +641,9 @@ export default class LightragAPI {
     async graphChat(queryParams: any, workspace?: string) {
         const { stream } = queryParams;
         try {
+            if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
+                workspace = ""
+            }
             const url = stream ? `${this.host}/query/stream` : `${this.host}/query`;
             const dataStream: any = await request(url, {
                 method: 'POST',

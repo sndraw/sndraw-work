@@ -1,18 +1,19 @@
 import useHeaderHeight from '@/hooks/useHeaderHeight';
-import { ReloadOutlined } from '@ant-design/icons';
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Divider, FloatButton, Input, Space, Tag, Typography } from 'antd';
 import classNames from 'classnames';
-import { Key, useCallback, useRef, useState } from 'react';
+import { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LinkDelete from '../GraphMap/LinkPanel/LinkDelete';
 import LinkEdit from '../GraphMap/LinkPanel/LinkEdit';
 import NodeDelete from '../GraphMap/NodePanel/NodeDelete';
 import NodeEdit from '../GraphMap/NodePanel/NodeEdit';
 import { formatText } from '../GraphMap/utils';
 import styles from './index.less';
-import { useModel } from '@umijs/max';
-import { AI_GRAPH_PLATFORM_MAP } from '@/common/ai';
-const { Title, Paragraph, Text } = Typography;
+import { useAccess, useModel } from '@umijs/max';
+import { OperationTypeEnum } from '@/types';
+import LinkAdd from '../GraphMap/LinkPanel/LinkAdd';
+import NodeAdd from '../GraphMap/NodePanel/NodeAdd';
 
 type GraphTablePropsType = {
   title?: string;
@@ -20,8 +21,8 @@ type GraphTablePropsType = {
   graph: string;
   // 当前workspace
   workspace: string;
-  // 数据列表
-  dataList: any;
+  // 图谱数据
+  graphData?: API.AIGraphData;
   // loading状态
   loading: boolean;
   // 刷新
@@ -33,7 +34,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
     title,
     graph,
     workspace,
-    dataList,
+    graphData,
     loading,
     refresh,
     className,
@@ -45,19 +46,76 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
   const titleRef = useRef<HTMLDivElement>(null);
 
   const [searchText, setSearchText] = useState<string>('' as string);
+  // 操作状态管理
+  const { operation, setOperation, resetOperation } = useModel('graphOperation');
 
   const listRef = useRef<any>(null);
   const headerHeight = useHeaderHeight();
 
-  const { getGraphInfo } = useModel('graphList');
-  const graphInfo = getGraphInfo(graph);
-  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
+  const access = useAccess();
+  const canEdit = access.canSeeDev;
 
-  const filterNodes = (dataList: any[], searchText: string): any[] => {
-    return dataList.filter((item: any) =>
-      item?.label?.toLowerCase()?.includes(searchText?.toLowerCase()),
+  useEffect(() => {
+    return () => {
+      // 重置操作状态，防止操作状态影响下一次渲染
+      resetOperation();
+    };
+  }, []);
+
+  //  渲染关联节点的渲染函数
+  const edgesRender = (edges: any[]) => {
+    if (!edges || edges.length === 0) {
+      return null;
+    }
+    return (
+      <Space direction="vertical" wrap >
+        {
+          edges.map((edge: any, index: number) => (
+            <Space key={index} direction="horizontal" wrap className={styles.edgeInfoItem}>
+              <span>
+                <label>关联节点：</label>
+                <Tag
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setSearchText(formatText(edge?.target));
+                  }}
+                  color="processing"
+                >
+                  {formatText(edge?.target)}
+                </Tag>
+              </span>
+              {
+                canEdit &&
+                <>
+                  <LinkEdit
+                    graph={graph}
+                    workspace={workspace}
+                    link={edge}
+                    refresh={() => {
+                      // setVisible(false);
+                      refresh?.();
+                    }}
+                    disabled={loading}
+                  />
+                  <LinkDelete
+                    graph={graph}
+                    workspace={workspace}
+                    link={edge}
+                    refresh={() => {
+                      // setVisible(false);
+                      refresh?.();
+                    }}
+                    disabled={loading}
+                  />
+                </>
+              }
+            </Space>
+          ))
+        }
+      </Space>
     );
   };
+
 
   const columns: ProColumns<any>[] = [
     {
@@ -67,10 +125,10 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
     },
     {
       title: '节点',
-      dataIndex: 'label',
-      key: 'label',
+      dataIndex: 'id',
+      key: 'id',
       render: (text, row) => {
-        return <span>{formatText(row.label)}</span>
+        return <span>{formatText(row.id)}</span>
       },
     },
     {
@@ -83,56 +141,35 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
     },
     {
       title: '关联节点',
-      dataIndex: 'edge',
-      key: 'edge',
+      dataIndex: 'edges',
+      key: 'edges',
       render: (text, row) => {
-        if (!row?.edge) {
-          return <></>;
+        const buttonRender = () => (<Button
+          type="link"
+          title="添加关联节点"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setOperation({
+              type: OperationTypeEnum.addLink,
+              link: {
+                source: row
+              }
+            })
+          }}>
+        </Button>)
+        if (!row?.edges) {
+          return <>{buttonRender()}</>;
         }
         return (
-          <Space direction="horizontal" wrap className={styles.edgeInfoItem}>
-            <span>
-              <label>关联节点：</label>
-              <Tag
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  setSearchText(formatText(row?.edge?.target));
-                }}
-                color="processing"
-              >
-                {formatText(row?.edge?.target)}
-              </Tag>
-            </span>
-            {
-              canEdit &&
-              <>
-                <LinkEdit
-                  graph={graph}
-                  workspace={workspace}
-                  link={row.edge}
-                  refresh={() => {
-                    // setVisible(false);
-                    refresh?.();
-                  }}
-                  disabled={loading}
-                />
-                <LinkDelete
-                  graph={graph}
-                  workspace={workspace}
-                  link={row.edge}
-                  refresh={() => {
-                    // setVisible(false);
-                    refresh?.();
-                  }}
-                  disabled={loading}
-                />
-              </>
-            }
-          </Space>
+          <>
+            {buttonRender()}
+            {edgesRender(row.edges)}
+          </>
         );
-      },
+      }
     },
   ];
+
   if (canEdit) {
     columns.push(
       {
@@ -175,6 +212,27 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
     };
   }, [headerHeight]);
 
+
+  const filterNodes = useCallback((searchText: string): any[] => {
+    const { nodes, edges } = graphData || {};
+    if (!nodes) return [];
+    const fliterNodes = nodes.filter((item: any) =>
+      item?.label?.toLowerCase()?.includes(searchText?.toLowerCase()),
+    );
+    const newNodes = fliterNodes.map((node: any, index: number) => {
+      const filterEdges = edges?.filter((edge: any) => {
+        return edge?.source === node.id;
+      });
+      return {
+        ...node,
+        num: (index + 1).toString().padStart(2, '0'),
+        edges: filterEdges
+      };
+    });
+    return newNodes;
+  }, [graphData]);
+
+
   // 请求加载状态
   return (
     <div
@@ -201,7 +259,21 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
             setSearchText(value);
           }}
         />
-        <>
+        <FloatButton.Group>
+          {/* 添加节点 */}
+          <FloatButton
+            className={styles.refreshButton}
+            tooltip="添加节点"
+            icon={<PlusOutlined />}
+            key="addNode"
+            type="primary"
+            onClick={() => {
+              setOperation({
+                type: OperationTypeEnum.addNode,
+                node: null,
+              });
+            }}
+          ></FloatButton>
           {/* 刷新 */}
           <FloatButton
             className={styles.refreshButton}
@@ -212,7 +284,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
               refresh?.();
             }}
           ></FloatButton>
-        </>
+        </FloatButton.Group>
       </Space>
 
       <ProTable<any>
@@ -220,7 +292,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
         className={styles.tableWrapper}
         loading={loading}
         rowKey={'id'}
-        dataSource={filterNodes(dataList, searchText)}
+        dataSource={filterNodes(searchText)}
         rowClassName={styles.rowItem}
         search={false}
         options={false}
@@ -260,9 +332,12 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
           size: 'small',
           pageSize: 10,
           showSizeChanger: true,
-          total: dataList?.length,
+          total: graphData?.nodes?.length,
         }}
       />
+      {/* 添加节点关系 */}
+      <LinkAdd graph={graph} graphData={graphData} workspace={workspace} refresh={refresh} />
+      <NodeAdd graph={graph} workspace={workspace} refresh={refresh} />
     </div>
   );
 };

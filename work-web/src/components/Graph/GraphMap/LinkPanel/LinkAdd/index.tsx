@@ -1,54 +1,67 @@
-import { updateGraphLink } from '@/services/common/ai/graph';
-import { EditOutlined } from '@ant-design/icons';
+import { addGraphLink } from '@/services/common/ai/graph';
+import { OperationTypeEnum } from '@/types';
+import { PlusOutlined } from '@ant-design/icons';
 import {
-  ModalForm,
+  DrawerForm,
   ProFormDigit,
+  ProFormSelect,
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Button, Form } from 'antd';
-import classNames from 'classnames';
-import React, { useState } from 'react';
+import { Form } from 'antd';
+import React, { useEffect, useState } from 'react';
 
-interface LinkEditProps {
+interface LinkAddProps {
   graph: string;
   workspace: string;
-  link: any;
+  graphData?: API.AIGraphData;
   refresh?: () => void;
-  disabled: boolean;
   className?: string;
 }
 
-const LinkEdit: React.FC<LinkEditProps> = (props) => {
-  const { graph, workspace, link, refresh, disabled, className } = props;
+const LinkAdd: React.FC<LinkAddProps> = (props) => {
+  const { graph, workspace, graphData, refresh, className } = props;
   const [form] = Form.useForm<API.AIGraphLinkVO>();
   // 操作状态管理
-  const { operation, setOperation } = useModel('graphOperation');
+  const { operation, setOperation, resetOperation } = useModel('graphOperation');
+  // 状态管理
+  const [visible, setVisible] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const getDefaultValues = (link: API.AIGraphLinkVO) => {
+  const sourceNode = operation?.link?.source;
+
+  // 打开弹窗
+  useEffect(() => {
+    if (operation?.type !== OperationTypeEnum.addLink) {
+      setVisible(false);
+      return;
+    }
+    setVisible(true);
+    // run();
+  }, [operation]);
+
+  const getDefaultValues = () => {
     return {
-      id: link?.id,
-      source: link?.source?.id || link?.source,
-      target: link?.target?.id || link?.target,
-      weight: link?.weight,
-      keywords: link?.keywords,
-      description: link?.description,
-      source_id: link?.source_id,
+      source: sourceNode?.id,
+      target: "",
+      weight: 0.0,
+      keywords: "",
+      description: "",
+      source_id: sourceNode?.source_id,
     };
   };
-  const handleEdit = async (values: any) => {
+  const handleAdd = async (values: any) => {
     setLoading(true);
     try {
-      await updateGraphLink(
+      await addGraphLink(
         {
           graph: graph,
-          workspace: workspace,
-          source: link?.source?.id || link?.source,
-          target: link?.target?.id || link?.target,
+          workspace: workspace
         },
         {
+          source: values?.source,
+          target: values?.target,
           weight: values?.weight,
           keywords: values?.keywords,
           description: values?.description,
@@ -73,29 +86,56 @@ const LinkEdit: React.FC<LinkEditProps> = (props) => {
     }
   };
 
-  const isDisabled = disabled || loading;
+  // 获取目标节点选项
+  const getTargetNodes = () => {
+    const sourceNodeId = sourceNode?.id;
+    if (sourceNodeId) {
+      const targetNodes = graphData?.nodes?.filter((node) => {
+        // 如果目标节点即当前节点，则不显示该节点
+        if (node.id === sourceNodeId) {
+          return false;
+        }
+        const hasLink = graphData?.edges?.some((edge: any) => {
+          const edgeSource = edge?.source?.id || edge.source;
+          const edgeTarget = edge?.target?.id || edge.target;
+          // 如果包含目标节点的节点关系的目标节点是当前节点，则不显示该节点
+          if (edgeSource === node.id && edgeTarget === sourceNodeId) {
+            return true;
+          }
+          // 如果包含目标节点的节点关系的源节点是当前节点，则不显示该节点
+          if (edgeTarget === node.id && edgeSource === sourceNodeId) {
+            return true;
+          }
+          return false;
+        });
+        if (hasLink) {
+          return false;
+        }
+        return true;
+      });
+      return targetNodes?.map((node) => ({ label: node.label, value: node.id }));
+    }
+    return graphData?.nodes?.map((node) => ({ label: node.label, value: node.id }));
+  };
+
+  const isDisabled = loading;
+
+
+
   return (
-    <ModalForm
-      title={`编辑节点关系`}
-      trigger={
-        <Button
-          key={link?.id || 'edit'}
-          className={classNames(className)}
-          title="编辑节点关系"
-          icon={<EditOutlined />}
-          type="text"
-          loading={loading}
-          disabled={isDisabled}
-        ></Button>
-      }
-      modalProps={{ destroyOnClose: true }}
+    <DrawerForm
+      title={`添加节点关系`}
+      open={visible}
+      drawerProps={{ destroyOnClose: true, mask: true }}
+      width={"378px"}
       disabled={isDisabled}
       form={form}
       onOpenChange={(open) => {
         if (!open) {
-          // form.resetFields();
+          resetOperation();
+          form.resetFields();
         } else {
-          form.setFieldsValue(getDefaultValues(link));
+          form.setFieldsValue(getDefaultValues());
         }
       }}
       onFinish={async (values) => {
@@ -103,10 +143,11 @@ const LinkEdit: React.FC<LinkEditProps> = (props) => {
         if (!validate) {
           return false;
         }
-        const isSuccess = await handleEdit(values);
+        const isSuccess = await handleAdd(values);
         if (!isSuccess) {
           return false;
         }
+        resetOperation(); // 重置操作状态
         refresh?.();
         return true;
       }}
@@ -126,24 +167,20 @@ const LinkEdit: React.FC<LinkEditProps> = (props) => {
           },
         ]}
         placeholder="请输入源节点"
-        disabled={true}
+        disabled={sourceNode}
       />
-      <ProFormText
+      <ProFormSelect
         name="target"
         label="目标节点"
+        options={getTargetNodes() as any}
+        showSearch
         rules={[
           {
             required: true,
             message: '请输入目标节点',
-          },
-          {
-            min: 1,
-            max: 64,
-            message: '目标节点长度为1到64字符',
-          },
+          }
         ]}
         placeholder="请输入目标节点"
-        disabled={true}
       />
       <ProFormDigit
         name="weight"
@@ -212,8 +249,8 @@ const LinkEdit: React.FC<LinkEditProps> = (props) => {
         ]}
         placeholder="请输入来源ID"
       />
-    </ModalForm>
+    </DrawerForm>
   );
 };
 
-export default LinkEdit;
+export default LinkAdd;

@@ -1,5 +1,5 @@
 import { OperationTypeEnum } from '@/types';
-import { useModel } from '@umijs/max';
+import { useAccess, useModel } from '@umijs/max';
 import { Drawer, Empty, Flex, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { formatText } from '../utils';
@@ -22,21 +22,8 @@ const LinkPanel: React.FC<LinkPanelProps> = (props) => {
   const [visible, setVisible] = useState(false);
   // 操作状态管理
   const { operation, resetOperation } = useModel('graphOperation');
-  // // 查询节点
-  // // 知识图谱列表-请求
-  // const { data, loading, run } = useRequest(
-  //   () =>
-  //     getGraphLink({
-  //       graph: graph,
-  //       link_id: operation?.link?.id || '',
-  //     }),
-  //   {
-  //     manual: true,
-  //   },
-  // );
-  const { getGraphInfo } = useModel('graphList');
-  const graphInfo = getGraphInfo(graph);
-  const canEdit = graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
+  const access = useAccess();
+  const canEdit = access.canSeeDev;
   const [loading, setLoading] = useState(false);
   const data = operation?.link;
   // 打开抽屉
@@ -70,17 +57,19 @@ const LinkPanel: React.FC<LinkPanelProps> = (props) => {
           {canEdit && <Flex gap={16} wrap align="center" justify="end">
             {/* 编辑 */}
             <LinkEdit
+              key={"edit" + operation?.link?.id}
               graph={graph}
               workspace={workspace}
               link={data}
               refresh={() => {
-                // setVisible(false);
+                setVisible(false);
                 refresh?.();
               }}
               disabled={loading}
             />
             {/* 删除 */}
             <LinkDelete
+              key={"delete" + operation?.link?.id}
               graph={graph}
               workspace={workspace}
               link={data}
@@ -100,15 +89,12 @@ const LinkPanel: React.FC<LinkPanelProps> = (props) => {
         {data && (
           <div className={styles?.linkInfo}>
             {/* 节点信息展示 */}
-            <p className={styles?.linkInfoItem}>
-              <label className={styles?.linkLabel}>节点ID：</label>
+            {/* <p className={styles?.linkInfoItem}>
+              <label className={styles?.linkLabel}>ID：</label>
               <span>
-                {formatText(data?.id, {
-                  splitChar: '_',
-                  joinChar: ' — ',
-                })}
+                {formatText(data?.id)}
               </span>
-            </p>
+            </p> */}
             {/* 节点信息展示 */}
             <p className={styles?.linkInfoItem}>
               <label className={styles?.linkLabel}>源节点：</label>

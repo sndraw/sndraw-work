@@ -229,8 +229,13 @@ const GraphPanel3D: React.FC<GraphPanel3DPropsType> = (
           });
         }}
         onNodeRightClick={(node, event) => {
-          // 处理节点右键点击事件，弹出操作列表
-          resetOperation();
+          // 处理节点右键点击事件，弹出节点关系添加
+          setOperation({
+            type: OperationTypeEnum.addLink,
+            link: {
+              source: node
+            },
+          });
         }}
         onLinkClick={(link, event) => {
           setOperation({
@@ -239,7 +244,6 @@ const GraphPanel3D: React.FC<GraphPanel3DPropsType> = (
           });
         }}
         onLinkRightClick={(link, event) => {
-          // 获取envet位置
           setOperation({
             type: OperationTypeEnum.contextmenu,
             link: link,

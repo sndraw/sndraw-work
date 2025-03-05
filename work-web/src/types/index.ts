@@ -4,7 +4,8 @@ import React from 'react';
 export enum OperationTypeEnum {
   no = 'no',
   contextmenu = 'contextmenu',
-  add = 'add',
+  addLink = 'addLink',
+  addNode = 'addNode',
   delete = 'delete',
   edit = 'edit',
   copy = 'copy',

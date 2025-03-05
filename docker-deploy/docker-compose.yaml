@@ -28,8 +28,8 @@ services:
       GRAPH_STORAGE: NetworkXStorage
       VECTOR_STORAGE: NanoVectorDBStorage
       # addon params
-      ADDON_PARAMS_EXAMPLE_NUMBER: 2
-      ADDON_PARAMS_LANGUAGE: "Simplfied Chinese"
+      EXAMPLE_NUMBER: 2
+      SUMMARY_LANGUAGE: "Simplfied Chinese"
       # other
       ENABLE_LLM_CACHE_FOR_ENTITY_EXTRACT: false
       ENABLE_LLM_CACHE: true

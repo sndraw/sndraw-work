@@ -46,7 +46,7 @@ const GraphList: React.FC<GraphListPropsType> = (props) => {
 
   const access = useAccess();
 
-  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT && graphInfo?.code === AI_GRAPH_PLATFORM_MAP.lightrag_multi.value;
+  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT;
 
   const isLoading = !!loading;
 
@@ -114,13 +114,13 @@ const GraphList: React.FC<GraphListPropsType> = (props) => {
         dataSource={filterData}
         itemLayout="horizontal"
         renderItem={(item: any) => (
-          <div className={styles.listItem} key={item.id}>
+          <div className={styles.listItem} key={item?.id}>
             <GraphCard
               mode={mode}
               refresh={() => {
                 refresh();
               }}
-              key={item.name}
+              key={item?.name}
               item={item}
             />
           </div>

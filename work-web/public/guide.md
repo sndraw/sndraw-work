@@ -35,4 +35,4 @@
 > 2. openai：http://127.0.0.1:11434/v1
 #### 知识图谱-接口类型
 > 1. LightRAG：http://127.0.0.1:19621
-> 2. LightRAG_Multi：http://127.0.0.1:19621/new
+> 2. LightRAG_Multi：http://127.0.0.1:19621

@@ -1,12 +1,14 @@
 import { MODE_ENUM } from '@/constants/DataMap';
 import useHeaderHeight from '@/hooks/useHeaderHeight';
-import { ReloadOutlined } from '@ant-design/icons';
-import { useAccess } from '@umijs/max';
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useAccess, useModel } from '@umijs/max';
 import { Divider, Flex, FloatButton, Space, Spin, Switch } from 'antd';
 import classNames from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import GraphMap from '../GraphMap';
 import styles from './index.less';
+import { OperationTypeEnum } from '@/types';
+import { use } from 'marked';
 
 type GraphDisplayPropsType = {
   mode?: MODE_ENUM;
@@ -31,7 +33,9 @@ const GraphDisplay: React.FC<GraphDisplayPropsType> = (props) => {
 
   const access = useAccess();
   const [displayMode, setDisplayMode] = useState<'2d' | '3d'>('2d');
-
+  // 操作状态管理
+  const { operation, setOperation, resetOperation } = useModel('graphOperation');
+  
   const headerHeight = useHeaderHeight();
   const containerStyle = useCallback(() => {
     return {
@@ -39,7 +43,14 @@ const GraphDisplay: React.FC<GraphDisplayPropsType> = (props) => {
     };
   }, [headerHeight]);
 
-  const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT;
+  useEffect(() => {
+    return () => {
+      // 重置操作状态，防止操作状态影响下一次渲染
+      resetOperation();
+    };
+  }, []);
+
+  // const canEdit = access.canSeeDev && mode === MODE_ENUM.EDIT;
   return (
     <Spin spinning={loading}>
       <div
@@ -67,15 +78,20 @@ const GraphDisplay: React.FC<GraphDisplayPropsType> = (props) => {
             />
           </Space>
           <FloatButton.Group className={styles?.graphGroupBtns}>
-            {/* <Access accessible={canEdit}>
-              <DocumentInput
-                graph={graph}
-                disabled={loading}
-                refresh={() => {
-                  refresh?.();
-                }}
-              />
-            </Access> */}
+            {/* 添加节点 */}
+            <FloatButton
+              className={styles.refreshButton}
+              tooltip="添加节点"
+              icon={<PlusOutlined />}
+              key="addNode"
+              type="primary"
+              onClick={() => {
+                setOperation({
+                  type: OperationTypeEnum.addNode,
+                  node: null,
+                });
+              }}
+            ></FloatButton>
             <FloatButton
               tooltip="刷新"
               icon={<ReloadOutlined />}
