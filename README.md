@@ -48,8 +48,8 @@
 
 
 ## 截图展示
-### 系统设置
-![系统设置](./docs/assets/系统设置.png)  
+### 系统配置
+![系统配置](./docs/assets/系统配置.png)  
 ### 模型管理
 ![模型管理](./docs/assets/模型管理.png) 
 ### 模型对话
@@ -60,3 +60,8 @@
 ![图谱编辑](./docs/assets/图谱编辑.png)  
 ### 图谱展示
 ![图谱展示](./docs/assets/图谱展示.png)
+
+
+## 相关文档
+### LightRAG-运行流程
+![LightRAG-运行流程](./docs/assets/LightRAG-运行流程.jpg)  
