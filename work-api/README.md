@@ -16,7 +16,6 @@
 
 **示例如下（拷贝示例文件并修改为本地 env 文件）**  
 本地 env 文件：`.env.local`
-
 ```
 SERVER_PORT=5001
 SERVER_LOGS_PATH=/logs/work-api
@@ -85,8 +84,6 @@ docker login -u username <IP:port>/<repository>
 
 #### make命令（参数可选）
 注：Makefile中定义了build-push-all目标，可以一次性构建并推送镜像
-
 ```
 make build-push-all REGISTRY_URL=<IP:port>/<repository> IMAGE_NAME=work-api IMAGE_VERISON=1.0.0
-
 ```
