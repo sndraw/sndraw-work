@@ -187,9 +187,9 @@ services:
       #前端静态文件请求地址前缀
       - UMI_APP_PUBLIC_PATH=./
       #平台标题/名称
-      - UMI_APP_TITLE=AI模型广场
+      - UMI_APP_TITLE=sndraw-work
       #平台副标题
-      - UMI_APP_SUB_TITLE=大模型管理中心
+      - UMI_APP_SUB_TITLE=多平台AI模型与知识图谱管理中心
       #平台logo
       - UMI_APP_LOGO_URL=
       #平台icon
