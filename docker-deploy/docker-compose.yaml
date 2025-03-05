@@ -2,7 +2,7 @@ services:
 
   # The lightrag.
   work_lightrag:
-    image: lightrag-api:1.0.5
+    image: lightrag-api:1.0.6
     restart: always
     environment:
       DEBUG: false
@@ -116,7 +116,7 @@ services:
 
   # The work api.
   work_api:
-    image: work-api:1.0.5
+    image: work-api:1.0.6
     restart: always
     environment:
       - SERVER_TITLE=work-api
@@ -173,7 +173,7 @@ services:
 
   # The work web.
   work_web:
-    image: work-web:1.0.5
+    image: work-web:1.0.6
     restart: always
     environment:
       # 环境变量
@@ -231,7 +231,35 @@ services:
     entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
     networks:
       - work_shared_network
-
+# work_ollama:
+  #   image: 'ollama/ollama:latest'
+  #   pull_policy: if_not_present
+  #   tty: true
+  #   restart: always
+  #   environment:
+  #     TZ: Asia/Shanghai
+  #     # OLLAMA_HTTP_BIND: 0.0.0.0
+  #     # OLLAMA_HTTP_PORT: 11434
+  #     # OLLAMA_HTTP_HOST: 0.0.0.0
+  #     # OLLAMA_HF_ENDPOINT: https://hf-mirror.com
+  #     OLLAMA_KEEP_ALIVE: 30m
+  #   networks:
+  #     - work_shared_network
+  #   volumes:
+  #     - ./volumes/ollama/.ollama:/root/.ollama
+  #   ports:
+  #     - '21434:11434'
+  #     # - '443:443'
+  #     # - '22:22'
+  #   # GPU support
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities:
+  #               - gpu
 # 定义共享网络
 networks:
   work_shared_network:
