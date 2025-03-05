@@ -45,3 +45,18 @@
 #### 知识图谱-接口类型
 > 1. LightRAG：http://127.0.0.1:19621
 > 2. LightRAG_Multi：http://127.0.0.1:19621
+
+
+## 截图展示
+### 系统设置
+![系统设置](./docs/assets/系统设置.png)  
+### 模型管理
+![模型管理](./docs/assets/模型管理.png) 
+### 模型对话
+![模型对话](./docs/assets/模型对话.png)  
+### 图谱空间
+![图谱空间](./docs/assets/图谱空间.png)  
+### 图谱编辑
+![图谱编辑](./docs/assets/图谱编辑.png)  
+### 图谱展示
+![图谱展示](./docs/assets/图谱展示.png)

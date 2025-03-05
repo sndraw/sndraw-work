@@ -1,3 +1,4 @@
 volumes
 logs
 *.log
+*docker-compose.*.yaml
