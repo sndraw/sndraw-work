@@ -2,7 +2,7 @@
 // 该文件由 OneAPI 自动生成，请勿手动修改！
 import { request } from '@umijs/max';
 
-/** POST /api/v1/route */
+/** POST /route */
 export async function querySiteRouters(
   params: {
     // query
@@ -15,7 +15,7 @@ export async function querySiteRouters(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.Result_SiteRoutes_>('/api/v1/route', {
+  return request<API.Result_SiteRoutes_>('/route', {
     method: 'GET',
     params: {
       ...params,
@@ -24,9 +24,9 @@ export async function querySiteRouters(
   });
 }
 
-/** POST /api/v1/setup */
+/** POST /setup */
 export async function setup(body?: API.RegisterInfo, options?: {}) {
-  return request<API.Result_string_>(`/api/v1/setup`, {
+  return request<API.Result_string_>(`/setup`, {
     method: 'POST',
     data: body,
     ...(options || {}),

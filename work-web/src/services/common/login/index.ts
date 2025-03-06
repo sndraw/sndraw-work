@@ -3,9 +3,9 @@
 import { HTTP_AUTH_VALUE_PREFIX } from '@/utils/authToken';
 import { request } from '@umijs/max';
 
-/** POST /api/v1/login */
+/** POST /login */
 export async function login(body?: API.LoginInfo, options?: {}) {
-  return request<API.Result_LoginInfo_>('/api/v1/login', {
+  return request<API.Result_LoginInfo_>('/login', {
     method: 'POST',
     data: body,
     ...(options || {
@@ -15,9 +15,9 @@ export async function login(body?: API.LoginInfo, options?: {}) {
   });
 }
 
-/** POST /api/v1/register */
+/** POST /register */
 export async function register(body?: API.RegisterInfo, options?: {}) {
-  return request<API.Result_string_>('/api/v1/register', {
+  return request<API.Result_string_>('/register', {
     method: 'POST',
     data: body,
     ...(options || {
@@ -28,10 +28,10 @@ export async function register(body?: API.RegisterInfo, options?: {}) {
 }
 
 // 请求刷新token
-/** POST /api/v1/token/refresh */
+/** POST /token/refresh */
 export async function reqRefreshToken(data?: API.RefreshTokenInfo) {
   try {
-    const response = await fetch('/api/v1/token/refresh', {
+    const response = await fetch('/token/refresh', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {

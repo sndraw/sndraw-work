@@ -60,6 +60,7 @@ const connectAuth = () => {
       try {
         const dbSync = process.env.DB_SYNC === 'true';
         if (process.env.NODE_ENV !== 'production' || dbSync) {
+          console.log("数据库强制同步...");
           await sequelize.sync({ force: dbSync, alter: process.env.NODE_ENV !== 'production' });
         } else {
           await sequelize.sync();

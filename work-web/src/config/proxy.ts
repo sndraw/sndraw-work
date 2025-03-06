@@ -10,9 +10,9 @@ export const getProxyOps = () => {
     });
   }
   // minio代理
-  if (process.env?.UMI_APP_PROXY_MINIOS_API) {
+  if (process.env?.UMI_APP_PROXY_MINIO_API) {
     proxyMap.set('/oss', {
-      target: process.env?.UMI_APP_PROXY_MINIOS_API,
+      target: process.env?.UMI_APP_PROXY_MINIO_API,
       // 转发
       pathRewrite: {
         '^/oss': '',

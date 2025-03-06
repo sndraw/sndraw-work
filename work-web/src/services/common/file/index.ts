@@ -3,7 +3,7 @@
 import { request } from '@umijs/max';
 import { message } from 'antd';
 
-/** GET /api/v1/file/upload */
+/** GET /file/upload */
 export async function getUrlAndUploadFileApi(
   params: {
     objectId: string; // 对象ID
@@ -18,7 +18,7 @@ export async function getUrlAndUploadFileApi(
     message.error('对象ID不能为空');
     return;
   }
-  const result = await request(`/api/v1/file/upload/${objectId}`, {
+  const result = await request(`/file/upload/${objectId}`, {
     method: 'GET',
     params: {
       name: file.name,
@@ -56,12 +56,12 @@ export async function getUrlAndUploadFileApi(
   return true;
 }
 
-/** POST /api/v1/file/upload */
+/** POST /file/upload */
 export async function uploadFileApi(
   body: FormData,
   options?: { [key: string]: any },
 ) {
-  return request<API.Result_List_UploadedFileInfo_>('/api/v1/file/upload', {
+  return request<API.Result_List_UploadedFileInfo_>('/file/upload', {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -71,7 +71,7 @@ export async function uploadFileApi(
   });
 }
 
-/** GET /api/v1/file/preview  */
+/** GET /file/preview  */
 export async function previewFileApi(
   params: {
     fileId: string;
@@ -79,14 +79,14 @@ export async function previewFileApi(
   options?: { [key: string]: any },
 ) {
   const { fileId } = params;
-  return request<any>(`/api/v1/file/preview/${fileId}`, {
+  return request<any>(`/file/preview/${fileId}`, {
     method: 'GET',
     skipErrorHandler: true, // 跳过错误处理
     ...(options || {}),
   });
 }
 
-/** POST /api/v1/file/download  */
+/** POST /file/download  */
 export async function downloadFileApi(
   params: {
     fileId: string;
@@ -94,7 +94,7 @@ export async function downloadFileApi(
   options?: { [key: string]: any },
 ) {
   const { fileId } = params;
-  return request<any>(`/api/v1/file/download/${fileId}`, {
+  return request<any>(`/file/download/${fileId}`, {
     method: 'GET',
     skipErrorHandler: true, // 跳过错误处理
     ...(options || {}),
