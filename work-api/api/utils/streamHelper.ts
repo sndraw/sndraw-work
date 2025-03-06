@@ -1,7 +1,7 @@
 import { Context } from "koa";
 import { PassThrough } from "stream";
 
-export const responseStream = async (ctx: Context, dataStream: any) => {
+export const responseStream = async (ctx: Context, dataStream: any, resovle?: (data: any) => void) => {
     let responseText: string = '';
 
     const passThroughStream = new PassThrough();
@@ -12,6 +12,7 @@ export const responseStream = async (ctx: Context, dataStream: any) => {
 
     // 确保在所有数据推送完毕后才调用 end()
     passThroughStream.on('end', () => {
+        resovle?.(responseText);
         // console.log("Stream ended successfully.")
         ctx.res.end();
     })

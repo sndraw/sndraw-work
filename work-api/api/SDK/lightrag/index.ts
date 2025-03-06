@@ -32,7 +32,7 @@ export default class LightragAPI {
                 return {
                     data: [
                         {
-                            name: '默认空间',
+                            name: 'default',
                             mtime: this.config?.updatedAt,
                             birthtime: this.config?.createdAt,
                         }
@@ -47,7 +47,7 @@ export default class LightragAPI {
                 },
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -61,7 +61,7 @@ export default class LightragAPI {
             if (this.code === AI_GRAPH_PLATFORM_MAP.lightrag.value) {
                 return {
                     data: {
-                        name: '默认空间',
+                        name: 'default',
                         mtime: this.config?.updatedAt,
                         birthtime: this.config?.createdAt,
                     }
@@ -75,7 +75,7 @@ export default class LightragAPI {
                 },
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -103,7 +103,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -131,7 +131,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -154,7 +154,7 @@ export default class LightragAPI {
                 },
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -182,7 +182,7 @@ export default class LightragAPI {
                 },
             });
             if (!result) {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             const nodes = result?.nodes?.map((node: any) => {
                 return {
@@ -233,7 +233,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -267,7 +267,7 @@ export default class LightragAPI {
                 data: node_data
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -298,7 +298,7 @@ export default class LightragAPI {
                 data: node_data
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -323,7 +323,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -354,7 +354,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -392,7 +392,7 @@ export default class LightragAPI {
                 data: link_data
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -426,7 +426,7 @@ export default class LightragAPI {
                 data: link_data
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -454,7 +454,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -489,7 +489,7 @@ export default class LightragAPI {
                 timeout: 0
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
         } catch (error: any) {
@@ -515,7 +515,7 @@ export default class LightragAPI {
                 timeout: 0
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
         } catch (error: any) {
             const errMessage = error?.response?.data?.detail || error
@@ -538,7 +538,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
 
@@ -563,8 +563,15 @@ export default class LightragAPI {
                     'X-Workspace': encodeURIComponent(workspace || ""),
                 }
             });
+            // 如果返回结果是个数组
+            if (result && Array.isArray(result)) {
+                return {
+                    data: result,
+                };
+            }
+
             if (!result?.statuses && !result.data) {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             let data: any[] = []
 
@@ -603,7 +610,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
 
@@ -627,7 +634,7 @@ export default class LightragAPI {
                 }
             });
             if (result?.code !== 0 && result?.status !== "success") {
-                throw new Error(result?.message);
+                throw new Error(result?.message || "请求失败");
             }
             return result;
 
