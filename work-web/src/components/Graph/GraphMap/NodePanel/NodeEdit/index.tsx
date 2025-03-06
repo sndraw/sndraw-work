@@ -32,7 +32,7 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
       id: node?.id,
       entity_type: node?.entity_type,
       description: node?.description,
-      source_id: node?.source_id,
+      source_id: node?.source_id || "UNKNOWN", // 默认值为 UNKNOWN
     };
   };
 
@@ -46,10 +46,10 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
           node_id: node.id,
         },
         {
-          entity_name: values?.id,
+          entity_name: node?.id,
           entity_type: values?.entity_type,
           description: values?.description,
-          source_id: values?.source_id,
+          source_id: values?.source_id || "UNKNOWN",
         },
         {
           timout: 0
@@ -123,6 +123,7 @@ const NodeEdit: React.FC<NodeEditProps> = (props) => {
           },
         ]}
         placeholder="请输入节点"
+        disabled
       />
       <ProFormText
         name="entity_type"
