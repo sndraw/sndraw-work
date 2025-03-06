@@ -52,6 +52,10 @@ export default () => {
     if (location?.pathname === ROUTE_MAP.REGISTER) {
       return <Navigate to={ROUTE_MAP.HOME} replace={true} />;
     }
+    // 如果当前页面是安装页面，跳转首页
+    if (location?.pathname === ROUTE_MAP.SETUP) {
+      return <Navigate to={ROUTE_MAP.HOME} replace={true} />;
+    }
     return <Outlet />;
   } else {
     // 如果当前页面是登录页面，正常显示
