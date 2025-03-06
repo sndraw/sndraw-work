@@ -111,8 +111,8 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (text) => {
-        return <DocStatusTag status={text as DocStatus} />;
+      render: (text,row) => {
+        return <span style={{cursor:'default' }} title={row?.error || text}><DocStatusTag status={text as DocStatus} /></span>;
       },
     },
     {
