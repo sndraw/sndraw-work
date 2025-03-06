@@ -35,7 +35,7 @@ const LinkEdit: React.FC<LinkEditProps> = (props) => {
       weight: link?.weight,
       keywords: link?.keywords,
       description: link?.description,
-      source_id: link?.source_id,
+      source_id: link?.source_id || "UNKNOWN", // 默认值为 UNKNOWN
     };
   };
   const handleEdit = async (values: any) => {
@@ -52,7 +52,7 @@ const LinkEdit: React.FC<LinkEditProps> = (props) => {
           weight: values?.weight,
           keywords: values?.keywords,
           description: values?.description,
-          source_id: values?.source_id,
+          source_id: values?.source_id || "UNKNOWN", // 默认值为 UNKNOWN
         },
         {
           timout: 0

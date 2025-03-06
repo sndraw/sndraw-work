@@ -315,7 +315,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
                 </div>
                 <div className={styles?.nodeInfoItem}>
                   <label className={styles?.nodeLabel}>来源：</label>
-                  <span className={styles?.nodeDescription}>{formatText(row?.source_id || '')}</span>
+                  <span className={styles?.nodeDescription}>{formatText(row?.source_id || 'UNKNOWN')}</span>
                 </div>
               </Typography>
             );

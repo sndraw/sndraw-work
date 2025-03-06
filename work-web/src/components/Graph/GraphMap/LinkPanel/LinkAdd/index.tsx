@@ -45,10 +45,10 @@ const LinkAdd: React.FC<LinkAddProps> = (props) => {
     return {
       source: sourceNode?.id,
       target: "",
-      weight: 0.0,
+      weight: 1.0,
       keywords: "",
       description: "",
-      source_id: sourceNode?.source_id,
+      source_id: sourceNode?.source_id || "UNKNOWN", // 默认值为 UNKNOWN
     };
   };
   const handleAdd = async (values: any) => {
@@ -65,7 +65,7 @@ const LinkAdd: React.FC<LinkAddProps> = (props) => {
           weight: values?.weight,
           keywords: values?.keywords,
           description: values?.description,
-          source_id: values?.source_id,
+          source_id: values?.source_id || "UNKNOWN", // 默认值为 UNKNOWN
         },
         {
           timout: 0

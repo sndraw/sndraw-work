@@ -120,7 +120,7 @@ const LinkPanel: React.FC<LinkPanelProps> = (props) => {
             </p>
             <p className={styles?.linkInfoItem}>
               <label className={styles?.linkLabel}>来源：</label>
-              <span>{data?.source_id || ''}</span>
+              <span>{data?.source_id || 'UNKNOWN'}</span>
             </p>
           </div>
         )}

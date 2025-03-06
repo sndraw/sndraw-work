@@ -45,7 +45,7 @@ const NodeAdd: React.FC<NodeAddProps> = (props) => {
       id: node?.id,
       entity_type: node?.entity_type,
       description: node?.description,
-      source_id: node?.source_id,
+      source_id: node?.source_id || "UNKNOWN", // 默认值为 UNKNOWN
     };
   };
 
@@ -61,7 +61,7 @@ const NodeAdd: React.FC<NodeAddProps> = (props) => {
           entity_name: values?.id,
           entity_type: values?.entity_type,
           description: values?.description,
-          source_id: values?.source_id,
+          source_id: values?.source_id || "UNKNOWN", // 默认值为 UNKNOWN
         },
         {
           timout: 0
