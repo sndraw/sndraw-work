@@ -10,6 +10,7 @@ import AIChatLogService from "@/service/AIChatLogService";
 import LightragAPI from "@/SDK/lightrag";
 import { GRAPH_WORKSPACE_RULE } from "@/common/rule";
 import path from "path";
+import { StatusEnum } from "@/constants/DataMap";
 
 
 // 多工作空间AI图谱
@@ -1179,10 +1180,12 @@ class AIGraphMultiController extends BaseController {
             }
 
             // 请求host，获取知识图谱数据
-            const responseText: any = await new LightragAPI(graphInfo?.toJSON()).graphChat(queryParams, workspace)
+            const dataStream = await new LightragAPI(graphInfo?.toJSON()).graphChat(queryParams, workspace)
             if (is_stream) {
-                return await responseStream(ctx, responseText);
+                responseText = await responseStream(ctx, dataStream);
+                return;
             }
+            responseText = dataStream?.response || dataStream || '';
             ctx.status = 200;
             ctx.body = resultSuccess({
                 data: responseText
@@ -1203,11 +1206,12 @@ class AIGraphMultiController extends BaseController {
                 // 添加聊天记录到数据库
                 AIChatLogService.addAIChatLog({
                     platform: graph,
-                    model: AI_GRAPH_PLATFORM_MAP.lightrag.value,
+                    model: workspace + "/" + AI_GRAPH_PLATFORM_MAP.lightrag.value,
                     type: 1,
                     input: JSON.stringify(queryParams), // 将请求参数转换为JSON字符串
                     output: responseText || '', // 确保响应文本不为空字符串
                     userId: ctx?.userId, // 假设ctx中包含用户ID
+                    status: StatusEnum.ENABLE
                 });
             })
         }

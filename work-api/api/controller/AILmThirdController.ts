@@ -736,6 +736,7 @@ class AILmController extends BaseController {
           input: JSON.stringify(params), // 将请求参数转换为JSON字符串
           output: responseText || '', // 确保响应文本不为空字符串
           userId: ctx?.userId, // 假设ctx中包含用户ID
+          status: StatusEnum.ENABLE
         });
       })
     }
@@ -814,7 +815,7 @@ class AILmController extends BaseController {
         responseText = await responseStream(ctx, dataStream);
         return;
       }
-      responseText = dataStream?.response || '';
+      responseText = dataStream?.response || dataStream || '';
       ctx.status = 200;
       ctx.body = resultSuccess({
         data: responseText
