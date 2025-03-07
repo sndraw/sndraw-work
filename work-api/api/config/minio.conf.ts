@@ -1,6 +1,6 @@
 // minio配置文件
 export default {
-    publicUrl: process.env.MINIO_PUBLIC_URL || "",
+    publicUrl: process.env.MINIO_UPLOAD_URL || "",
     endpoint: process.env.MINIO_ENDPOINT || "",
     port: Number(process.env.MINIO_PORT || 9000),
     accessKey: process.env.MINIO_ACCESS_KEY || "",

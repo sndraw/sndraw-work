@@ -7,7 +7,8 @@ x-shared-env: &shared-api-worker-env
   EXPOSE_REDIS_PORT: ${EXPOSE_REDIS_PORT:-6379}
   EXPOSE_MINIO_PORT: ${EXPOSE_MINIO_PORT:-9000}
   EXPOSE_MINIO_WEBUI_PORT: ${EXPOSE_MINIO_PORT:-9001}
-
+  MINIO_UPLOAD_URL: ${MINIO_UPLOAD_URL:-http://localhost:9000}
+  MINIO_FRONTEND_URL: ${MINIO_FRONTEND_URL:-http://localhost:9001}
   # General Configuration
   TZ: ${TZ:-Asia/Shanghai}
   SERVER_BASE_URL: ${SERVER_BASE_URL:-/api/v1}
@@ -27,13 +28,13 @@ x-shared-env: &shared-api-worker-env
   REDIS_USE_SSL: ${REDIS_USE_SSL:-false}
   REDIS_DB: ${REDIS_DB:-0}
   # MinIO Configuration
-  MINIO_PUBLIC: ${MINIO_PUBLIC:-}
+  MINIO_ALIAS: ${MINIO_ALIAS:-work_minio}
   MINIO_ENDPOINT: ${MINIO_ENDPOINT:-work_minio}
   MINIO_PORT: ${MINIO_PORT:-9000}
   MINIO_WEBUI_PORT: ${MINIO_WEBUI_PORT:-9001}
   MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
   MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
-  MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-work-prd}
+  MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-work}
   MINIO_REGION: ${MINIO_REGION:-ap-southeast-1}
   MINIO_USE_SSL: ${MINIO_USE_SSL:-false}
 
@@ -44,6 +45,10 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_ALIAS: ${MINIO_ALIAS:-workminio}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-work}
+      MINIO_BUCKET_POLICY: ${MINIO_BUCKET_POLICY:-workPolicy}
+      MINIO_FRONTEND_URL: ${MINIO_FRONTEND_URL:-http://localhost:9001}
       MINIO_WEBUI_PORT: ${MINIO_WEBUI_PORT:-9001}
       MINIO_REGION: ${MINIO_REGION:-ap-southeast-1}
     ports:
@@ -53,7 +58,6 @@ services:
       - ./init/work-minio/:/work-minio
       - ./volumes/minio:/minio_data
     entrypoint: ["/work-minio/entrypoint.sh"]
-    command: mc mb minio/${MINIO_BUCKET_NAME:-work}; mc policy work-policy minio/${MINIO_BUCKET_NAME:-work}"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MINIO_PORT:-9000}/minio/health/live" ]
       interval: 30s
