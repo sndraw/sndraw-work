@@ -7,8 +7,8 @@ x-shared-env: &shared-api-worker-env
   EXPOSE_REDIS_PORT: ${EXPOSE_REDIS_PORT:-6379}
   EXPOSE_MINIO_PORT: ${EXPOSE_MINIO_PORT:-9000}
   EXPOSE_MINIO_WEBUI_PORT: ${EXPOSE_MINIO_PORT:-9001}
-  MINIO_UPLOAD_URL: ${MINIO_UPLOAD_URL:-http://localhost:9000}
-  MINIO_FRONTEND_URL: ${MINIO_FRONTEND_URL:-http://localhost:9001}
+  MINIO_UPLOAD_URL: ${MINIO_UPLOAD_URL:-}
+  # MINIO_FRONTEND_URL: ${MINIO_FRONTEND_URL:-http://localhost:9001}
   # General Configuration
   TZ: ${TZ:-Asia/Shanghai}
   SERVER_BASE_URL: ${SERVER_BASE_URL:-/api/v1}
@@ -47,17 +47,19 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
       MINIO_ALIAS: ${MINIO_ALIAS:-workminio}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-work}
-      MINIO_BUCKET_POLICY: ${MINIO_BUCKET_POLICY:-workPolicy}
-      MINIO_FRONTEND_URL: ${MINIO_FRONTEND_URL:-http://localhost:9001}
+      MINIO_POLICY: ${MINIO_POLICY:-workPolicy}
+      # MINIO_FRONTEND_URL: ${MINIO_FRONTEND_URL:-http://localhost:9001}
       MINIO_WEBUI_PORT: ${MINIO_WEBUI_PORT:-9001}
       MINIO_REGION: ${MINIO_REGION:-ap-southeast-1}
+      MINIO_POLICY_FILE: /etc/minio/init/policy.json
     ports:
       - "${EXPOSE_MINIO_PORT:-9000}:${MINIO_PORT:-9000}"
       - "${EXPOSE_MINIO_WEBUI_PORT:-9001}:${MINIO_WEBUI_PORT:-9001}"
     volumes:
-      - ./init/work-minio/:/work-minio
       - ./volumes/minio:/minio_data
-    entrypoint: ["/work-minio/entrypoint.sh"]
+      - ./init/work-minio/:/etc/minio/init/
+    entrypoint: ["/etc/minio/init/entrypoint.sh"]
+    # command: minio server /minio_data --console-address ":${MINIO_WEBUI_PORT:-9001}"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MINIO_PORT:-9000}/minio/health/live" ]
       interval: 30s

@@ -6,7 +6,13 @@
 > 在项目根目录下创建一个名为`.env`的文件，并根据`.env.example`中的示例进行配置。
 > `.env`文件中包含了一些环境变量，用于配置数据库、Redis、MinIO等服务。
 
-### 1.2.启动主系统
+### 1.2.Minio配置
+> Minio是一个分布式对象存储系统，可以用来存储静态资源、备份数据等。
+> 在`.env`文件中，需要配置MinIO的相关信息，例如上传URL、存储桶名称等。
+> 阿娜。
+
+
+### 1.3.启动主系统
 > 在项目根目录下运行以下命令来启动服务：
 > ```
 > docker-compose up -d
@@ -22,4 +28,3 @@
 > ```
 > docker compose -f docker-compose.middleware.yaml --env-file .env.middleware up -d
 > ```
-

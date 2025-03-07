@@ -1,30 +1,41 @@
 #!/bin/sh
-# 启动 MinIO 服务器
-echo "Starting MinIO server...${MINIO_WEBUI_PORT:-9001}"
 
+# 获取变量值
+MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
+MINIO_ALIAS=${MINIO_ALIAS:-workminio}
+MINIO_WEBUI_PORT=${MINIO_WEBUI_PORT:-9001}
+MINIO_REGION=${MINIO_REGION:-ap-southeast-1}
+MINIO_POLICY_FILE=${MINIO_POLICY_FILE:-/etc/minio/init/policy.json}
+MINIO_POLICY=${MINIO_POLICY:-work-policy}
+MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME:-work}
+
+# 启动 MinIO 服务器
+echo "Setup MinIO server...${MINIO_WEBUI_PORT}"
 
  # 配置别名
-mc alias set ${MINIO_ALIAS:-workminio} http://localhost:${MINIO_WEBUI_PORT:-9001}
-echo "MinIO set alias ${MINIO_ALIAS:-workminio} http://localhost:${MINIO_WEBUI_PORT:-9001}"
+mc alias set ${MINIO_ALIAS} http://localhost:${MINIO_WEBUI_PORT}
+echo "MinIO set alias ${MINIO_ALIAS} http://localhost:${MINIO_WEBUI_PORT}"
 # 设置 REGION
-mc admin config set ${MINIO_ALIAS:-workminio} server region ${MINIO_REGION:-ap-southeast-1}}
-echo "MinIO set region ${MINIO_REGION:-ap-southeast-1}"
+mc admin config set ${MINIO_ALIAS} server region ${MINIO_REGION}}
+echo "MinIO set region ${MINIO_REGION}"
 
-# 应用 S3 策略
-# 这里以创建一个新的策略为例，实际应用中可以根据需要修改策略内容
-# minio policy add workPolicy /minio/workPolicy.json
- 
-# echo "MinIO add policy ${MINIO_POLICY:-workPolicy}"
+mc admin policy create ${MINIO_ALIAS} ${MINIO_POLICY} ${MINIO_POLICY_FILE}
 
-mc mb ${MINIO_ALIAS:-workminio}/work; 
-# mc policy  ${MINIO_POLICY:-workPolicy} ${MINIO_ALIAS:-workminio}/${MINIO_BUCKET_NAME:-work}
-# mc policy set  /minio/workPolicy.json ${MINIO_ALIAS:-workminio}/${MINIO_BUCKET_NAME:-work} user=${MINIO_ROOT_USER:-minioadmin}
-mc admin policy create ${MINIO_ALIAS:-workminio} ${MINIO_POLICY:-workPolicy} /work-minio/work-policy.json
-mc admin policy attach ${MINIO_ALIAS:-workminio} ${MINIO_POLICY:-workPolicy} --user ${MINIO_ROOT_USER:-minioadmin}
+echo "MinIO policy created ${MINIO_POLICY}"
 
-await "MinIO bucket created and policy attached." 10s
+mc mb ${MINIO_ALIAS}/${MINIO_BUCKET_NAME}; 
+echo "Bucket created ${MINIO_BUCKET_NAME}"
 
-minio server /minio_data --console-address ":${MINIO_WEBUI_PORT:-9001}"
+mc anonymous set policy/${MINIO_POLICY} ${MINIO_ALIAS}/${MINIO_BUCKET_NAME}
+echo "Anonymous policy set for bucket ${MINIO_BUCKET_NAME}"
+mc admin policy set ${MINIO_ALIAS} ${MINIO_POLICY}  user=${MINIO_ROOT_USER} ${MINIO_BUCKET_NAME}/*
+echo "Policy set for user ${MINIO_ROOT_USER}"
+
+echo "MinIO setup complete."
+
+minio server /minio_data --console-address ":${MINIO_WEBUI_PORT}"
+
 # 等待 MinIO 服务器启动
 sleep 5
 
