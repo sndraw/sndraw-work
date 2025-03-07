@@ -3,8 +3,6 @@ services:
   work_lightrag:
     image: lightrag-api:1.0.6
     restart: always
-    env_file:
-      - middleware.env
     environment:
       TZ: ${TZ:-Asia/Shanghai}
       DEBUG: ${LIGHTRAG_DEBUG:-false}
@@ -14,11 +12,11 @@ services:
       # LightRAG llm configuration
       LLM_BINDING: ${LIGHTRAG_LLM_BINDING:-ollama}
       LLM_BINDING_HOST: ${LIGHTRAG_LLM_BINDING_HOST:-http://127.0.0.1:11434}
-      LLM_MODEL: ${LIGHTRAG_LLM_MODEL:deepseek-r1:14b}
+      LLM_MODEL: ${LIGHTRAG_LLM_MODEL:-deepseek-r1:14b}
       LLM_BINDING_API_KEY: ${LIGHTRAG_LLM_BINDING_API_KEY:-}
       MAX_TOKENS: ${LIGHTRAG_MAX_TOKENS:-8192}
       # LightRAG embedding configuration
-      EMBEDDING_BINDING: ${LIGHTRAG_EMBEDDING_BINDING:-ollma}
+      EMBEDDING_BINDING: ${LIGHTRAG_EMBEDDING_BINDING:-ollama}
       EMBEDDING_BINDING_HOST: ${LIGHTRAG_EMBEDDING_BINDING_HOST:-http://127.0.0.1:11434}
       EMBEDDING_MODEL: ${LIGHTRAG_EMBEDDING_MODEL:-bge-m3:latest}
       EMBEDDING_BINDING_API_KEY: ${LIGHTRAG_EMBEDDING_BINDING_API_KEY:-}
@@ -39,51 +37,48 @@ services:
       - ./volumes/lightrag/data/rag_storage:/app/rag_storage
       - ./volumes/lightrag/data/inputs:/app/inputs
     ports:
-      - "${EXPOSE_LIGHTRAG_PORT:9621}:${LIGHTRAG_PORT:9621}"
+      - "${EXPOSE_LIGHTRAG_PORT:-9621}:${LIGHTRAG_PORT:-9621}"
     healthcheck:
-      test: [ "CMD", "curl", "-s", "http://localhost:${LIGHTRAG_PORT:9621}/health" ]
+      test: [ "CMD", "curl", "-s", "http://localhost:${LIGHTRAG_PORT:-9621}/health" ]
       interval: 30s
       timeout: 20s
       retries: 5
     networks:
       - work_shared_network
+      - default
 
-work_ollama:
-    image: 'ollama/ollama:latest'
-    pull_policy: if_not_present
-    tty: true
-    restart: always
-    env_file:
-      - middleware.env
-    environment:
-      TZ: ${TZ:-Asia/Shanghai}
-      OLLAMA_HOST: ${OLLAMA_HTTP_HOST:-0.0.0.0}:${OLLAMA_HTTP_PORT:-11434}
-      OLLAMA_ORIGINS: ${OLLAMA_ORIGINS:-*}
-      OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL:-4}
-      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS:-4}
-      OLLAMA_KEEPALIVE: ${OLLAMA_KEEPALIVE:-5m}
-    networks:
-      - work_shared_network
-    volumes:
-      - ./volumes/ollama/.ollama:/root/.ollama
-    ports:
-      - '${EXPOSE_OLLAMA_HTTP_PORT:-11434}:${OLLAMA_HTTP_PORT:-11434}'
-      # - '443:443'
-      # - '22:22'
-    # GPU support
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities:
-                - gpu
+  work_ollama:
+      image: 'ollama/ollama:latest'
+      pull_policy: if_not_present
+      tty: true
+      restart: always
+      environment:
+        TZ: ${TZ:-Asia/Shanghai}
+        OLLAMA_HOST: ${OLLAMA_HTTP_HOST:-0.0.0.0}:${OLLAMA_HTTP_PORT:-11434}
+        OLLAMA_ORIGINS: ${OLLAMA_ORIGINS:-*}
+        OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL:-4}
+        OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS:-4}
+        OLLAMA_KEEPALIVE: ${OLLAMA_KEEPALIVE:-5m}
+      networks:
+        - work_shared_network
+        - default
+      volumes:
+        - ./volumes/ollama/.ollama:/root/.ollama
+      ports:
+        - '${EXPOSE_OLLAMA_HTTP_PORT:-11434}:${OLLAMA_HTTP_PORT:-11434}'
+        # - '443:443'
+        # - '22:22'
+      # GPU support
+      deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities:
+                  - gpu
 # 指定共享网络
 networks:
   work_shared_network:
-    external: true
-
-# networks:
-#   work_shared_network:
-#     driver: bridge
+    driver: bridge
+    internal: true

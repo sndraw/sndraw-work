@@ -39,7 +39,6 @@ export enum STATUS_CODE_ENUM {
   // 服务器错误
   SERVER_ERROR = 500,
 }
-console.log(SERVER_BASE_URL);
 // 运行时配置
 const requestConfig: RequestConfig = {
   // 统一的请求设定

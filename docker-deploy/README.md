@@ -13,13 +13,13 @@
 > ```
 
 ### 2.附属系统（如不需要可以忽略）
-### 2.1.新建middleware.env文件，用于附属系统启动
-> 在项目根目录下创建一个名为`middleware.env`的文件，并根据`.middleware.env.example`中的示例进行配置。
-> `middleware.env`文件中包含了一些环境变量，用于配置附属系统的服务，如Ollama、LightRAG等。
+### 2.1.新建.env.middleware文件，用于附属系统启动
+> 在项目根目录下创建一个名为`.env.middleware`的文件，并根据`.env.middleware.example`中的示例进行配置。
+> `.env.middleware`文件中包含了一些环境变量，用于配置附属系统的服务，如Ollama、LightRAG等。
 
 ### 2.2.启动附属系统
 > 在项目根目录下运行以下命令来启动服务：
 > ```
-> docker-compose -f docker-compose.middleware.yaml up --env-file middleware.env -d
+> docker compose -f docker-compose.middleware.yaml --env-file .env.middleware up -d
 > ```
 

@@ -2,4 +2,5 @@ volumes
 logs
 *.log
 .env
-middleware.env
+.env.web
+.env.middleware

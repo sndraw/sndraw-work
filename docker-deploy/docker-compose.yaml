@@ -10,16 +10,16 @@ x-shared-env: &shared-api-worker-env
 
   # General Configuration
   TZ: ${TZ:-Asia/Shanghai}
-  SERVER_BASE_URL: ${SERVER_BASE_URL:-http://localhost}
+  SERVER_BASE_URL: ${SERVER_BASE_URL:-/api/v1}
   # DB Configuration
   DB_DIALECT: ${DB_DIALECT:-mysql}
   DB_SYNC: ${DB_SYNC:-false}
   DB_HOST: ${DB_HOST:-work_mysql}
   DB_PORT: ${DB_PORT:-3306}
-  DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
-  DB_USER: ${DB_USER:-test}
+  DB_USER: ${DB_USER:-root}
   DB_PASSWORD: ${DB_PASSWORD:-test}
   DB_DATABASE: ${DB_DATABASE:-work_api}
+  DB_TIMEZONE: ${DB_TIMEZONE:-+08:00}
   # Redis Configuration
   REDIS_HOST: ${REDIS_HOST:-work_redis}
   REDIS_PORT: ${REDIS_PORT:-6379}
@@ -42,14 +42,18 @@ services:
     image: minio/minio:RELEASE.2025-01-20T14-49-07Z
     restart: always
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_WEBUI_PORT: ${MINIO_WEBUI_PORT:-9001}
+      MINIO_REGION: ${MINIO_REGION:-ap-southeast-1}
     ports:
       - "${EXPOSE_MINIO_PORT:-9000}:${MINIO_PORT:-9000}"
       - "${EXPOSE_MINIO_WEBUI_PORT:-9001}:${MINIO_WEBUI_PORT:-9001}"
     volumes:
+      - ./init/work-minio/:/work-minio
       - ./volumes/minio:/minio_data
-    command: minio server /minio_data --console-address ":${MINIO_WEBUI_PORT:-9001}"
+    entrypoint: ["/work-minio/entrypoint.sh"]
+    command: mc mb minio/${MINIO_BUCKET_NAME:-work}; mc policy work-policy minio/${MINIO_BUCKET_NAME:-work}"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MINIO_PORT:-9000}/minio/health/live" ]
       interval: 30s
@@ -57,6 +61,7 @@ services:
       retries: 3
     networks:
       - work_shared_network
+      - default
 
   # The mysql database.
   work_mysql:
@@ -65,9 +70,7 @@ services:
     environment:
       TZ: ${TZ:-Asia/Shanghai}
       # The password for the default user.
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
-      MYSQL_USER: ${DB_USER:-test}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-test}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-test}
       MYSQL_DATABASE: ${DB_DATABASE:-work_api}
     command: 
       --default-authentication-plugin=mysql_native_password
@@ -82,7 +85,6 @@ services:
       # - ./mysql/my.cnf:/etc/my.cnf
     ports:
       - "${EXPOSE_DB_PORT:-3306}:${DB_PORT:-3306}"
-
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 1s
@@ -120,6 +122,18 @@ services:
       SERVER_LOGS_PATH: ${SERVER_LOGS_PATH:-}
       SERVER_BASE_URL: ${SERVER_BASE_URL:-/api/v1}
       CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-}
+      COOKIE_KEYS: ${COOKIE_KEYS:-test-key}
+      COOKIE_MAXAGE: ${COOKIE_MAXAGE:-259200}
+      COOKIE_NAMESPACE: ${COOKIE_NAMESPACE:-work_api}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      COOKIE_HTTPONLY: ${COOKIE_HTTPONLY:-true}
+      CRYPTO_SECRETKEY: ${CRYPTO_SECRETKEY:-}
+      OAUTH2_SECRET: ${OAUTH2_SECRET:-test-secret}
+      OAUTH2_BEARER: ${OAUTH2_BEARER:-Bearer}
+      OAUTH2_EXPIRES_IN: ${OAUTH2_EXPIRES_IN:-86400}
+      LOGIN_MAX_ERROR_COUNT: ${LOGIN_MAX_ERROR_COUNT:-3}
+      LOGIN_LOCK_TIME: ${LOGIN_LOCK_TIME:-5}
     volumes:
       # Mount the storage directory to the container, for storing user files.
       - ./volumes/app/work-api/uploads:/app/api/uploads
@@ -127,23 +141,16 @@ services:
       - work_mysql
       - work_redis
     ports:
-      - "${EXPOSE_SERVER_PORT:-5001}:${WORK_API_PORT:-5001}"
+      - "${EXPOSE_SERVER_PORT:-5001}:${SERVER_PORT:-5001}"
     user: root
     networks:
       - work_shared_network
+      - default
 
   # The work web.
   work_web:
     image: work-web:1.0.6
     restart: always
-    environment:
-      <<: *shared-api-worker-env
-      # 平台标题/名称
-      UMI_APP_TITLE: ${UMI_APP_TITLE:-多平台AI模型与知识图谱管理中心}
-      # 平台副标题
-      UMI_APP_SUB_TITLE: ${UMI_APP_TITLE:-多平台AI模型与知识图谱管理中心}
-      # 服务端请求基础路径
-      UMI_APP_SERVER_BASE_URL: ${SERVER_BASE_URL:-/api/v1}
     volumes:
       # - ./volumes/app/work-api/uploads:/usr/share/nginx/html/uploads
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -159,8 +166,11 @@ services:
     entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
     networks:
       - work_shared_network
+      - default
 
 # 定义共享网络
 networks:
   work_shared_network:
     driver: bridge
+    internal: true
+
