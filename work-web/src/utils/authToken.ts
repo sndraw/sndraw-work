@@ -5,7 +5,7 @@ export const HTTP_AUTH_KEY =
 export const HTTP_AUTH_VALUE_PREFIX =
   process.env?.UMI_APP_HTTP_AUTH_VALUE_PREFIX || 'Basic';
 // token-存储标识
-export const TOKEN_KEY = process.env?.UMI_APP_TOKEN_KEY || 'site_token';
+export const TOKEN_KEY = process.env?.UMI_APP_TOKEN_KEY || 'work_token';
 
 // 保存token
 export const setToken = (token: object | string) => {
@@ -32,4 +32,10 @@ export const getToken = () => {
 // 移除token
 export const clearToken = () => {
   localStorage.removeItem(TOKEN_KEY);
+};
+
+
+// 清理缓存
+export const clearCache = () => {
+  localStorage.clear();
 };

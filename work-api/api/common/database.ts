@@ -57,18 +57,26 @@ const connectAuth = () => {
   sequelize
     .authenticate()
     .then(async function () {
-      try {
-        const dbSync = process.env.DB_SYNC === 'true';
-        if (process.env.NODE_ENV !== 'production' || dbSync) {
-          await sequelize.sync({ force: dbSync, alter: process.env.NODE_ENV !== 'production' });
-        } else {
-          await sequelize.sync();
+
+      if (Number(process.env.NODE_APP_INSTANCE) > 0 ) {
+        console.log('This is a worker process with instance ID:', process.env.NODE_APP_INSTANCE);
+      } else {
+        console.log('This is the master process.');
+        try {
+          const dbSync = process.env.DB_SYNC === 'true';
+          if (process.env.NODE_ENV !== 'production' || dbSync) {
+            console.log("数据库强制同步：", dbSync);
+            await sequelize.sync({ force: dbSync, alter: process.env.NODE_ENV !== 'production' });
+          } else {
+            await sequelize.sync();
+          }
+          console.log("数据库同步成功！");
+        } catch (error) {
+          console.log(`数据库同步失败：${error}`);
+          throw error;
         }
-        console.log("数据库同步成功！");
-      } catch (error) {
-        console.log(`数据库同步失败：${error}`);
-        throw error;
       }
+
       console.log("数据库连接成功:", databaseConf.host, databaseConf.port);
     })
     .catch(function (error) {

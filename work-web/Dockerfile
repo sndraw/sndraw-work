@@ -21,31 +21,29 @@ RUN pnpm install
 
 # 复制项目文件到工作目录
 COPY . .
-COPY ./docker/entrypoint.sh /entrypoint.sh
-COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+# 修改env.example
+RUN cp .env.example .env
 
-# # 构建应用
-# RUN npm run build
-
-# # 使用 Nginx 镜像作为基础镜像
-# FROM 192.168.0.24:7001/nginx:1.25.4
-
-# # 将 Nginx 的默认配置文件替换为自定义配置文件
-# # 假设你有一个 nginx.conf 文件在项目的 nginx 目录中
-# COPY /docker/nginx/nginx.conf /etc/nginx/nginx.conf
-
-# # 从构建阶段复制构建生成的静态文件到 Nginx 用于托管的目录
-# COPY --from=builder /app/dist /usr/share/nginx/html
-
-# # 声明运行时容器提供服务的端口
-# EXPOSE 80
-# # 使用默认的启动命令启动 Nginx（默认 CMD 已经设置在 Nginx 基础镜像中）
+# 构建应用
+RUN pnpm build
 
 # COPY ./docker/entrypoint.sh /entrypoint.sh
-
-# # 将 Nginx 的默认配置文件替换为自定义配置文件
-# # 假设你有一个 nginx.conf 文件在项目的 nginx 目录中
 # COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+
+
+# 使用 Nginx 镜像作为基础镜像
+FROM nginx:1.25.4
+
+# 将 Nginx 的默认配置文件替换为自定义配置文件
+COPY ./docker/nginx /etc/nginx
+
+# 从构建阶段复制构建生成的静态文件到 Nginx 用于托管的目录
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 使用默认的启动命令启动 Nginx（默认 CMD 已经设置在 Nginx 基础镜像中）
+
+COPY ./docker/entrypoint.sh /entrypoint.sh
+
 
 ENTRYPOINT [ "/bin/bash","/entrypoint.sh" ]
 # 声明运行时容器提供服务的端口

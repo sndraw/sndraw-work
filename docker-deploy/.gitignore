@@ -1,4 +1,6 @@
 volumes
 logs
 *.log
-*docker-compose.*.yaml
+.env
+.env.web
+.env.middleware

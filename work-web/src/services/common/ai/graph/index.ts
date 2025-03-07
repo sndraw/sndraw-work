@@ -3,15 +3,15 @@
 import { postFetch } from '@/common/fetchRequest';
 import { request } from '@umijs/max';
 
-/** GET /api/v1/ai/graph */
+/** GET /ai/graph */
 export async function queryGraphList(options?: { [key: string]: any }) {
-  return request<API.Result_AIGraphInfoList_>('/api/v1/ai/graph', {
+  return request<API.Result_AIGraphInfoList_>('/ai/graph', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** GET /api/v1/ai/graph/:graph */
+/** GET /ai/graph/:graph */
 export async function getGraphInfo(
   params: {
     graph: string;
@@ -19,13 +19,13 @@ export async function getGraphInfo(
   options?: { [key: string]: any },
 ) {
   const { graph } = params;
-  return request<API.Result_AIGraphInfo_>(`/api/v1/ai/graph/${graph}`, {
+  return request<API.Result_AIGraphInfo_>(`/ai/graph/${graph}`, {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace */
+/** GET /ai/graph/:graph/workspace */
 export async function queryGraphWorkspaceList(
   params: {
     graph: string;
@@ -34,7 +34,7 @@ export async function queryGraphWorkspaceList(
 ) {
   const { graph } = params;
   return request<API.Result_AIGraphWorkspaceList_>(
-    `/api/v1/ai/graph/${graph}/workspace`,
+    `/ai/graph/${graph}/workspace`,
     {
       method: 'GET',
       ...(options || {}),
@@ -42,7 +42,7 @@ export async function queryGraphWorkspaceList(
   );
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace/:workspace*/
+/** GET /ai/graph/:graph/workspace/:workspace*/
 export async function getGraphWorkspaceInfo(
   params: {
     graph: string;
@@ -52,7 +52,7 @@ export async function getGraphWorkspaceInfo(
 ) {
   const { graph, workspace } = params;
   return request<API.Result_AIGraphWorkspaceInfo_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}`,
+    `/ai/graph/${graph}/workspace/${workspace}`,
     {
       method: 'GET',
       ...(options || {}),
@@ -60,7 +60,7 @@ export async function getGraphWorkspaceInfo(
   );
 }
 // 添加图谱空间
-/** POST /api/v1/ai/graph/:graph/workspace */
+/** POST /ai/graph/:graph/workspace */
 export async function addGraphWorkspace(
   params: {
     graph: string;
@@ -70,7 +70,7 @@ export async function addGraphWorkspace(
 ) {
   const { graph } = params;
   return request<API.Result_AIGraphWorkspaceInfo_>(
-    `/api/v1/ai/graph/${graph}/workspace`,
+    `/ai/graph/${graph}/workspace`,
     {
       method: 'POST',
       headers: {
@@ -83,7 +83,7 @@ export async function addGraphWorkspace(
 }
 
 // 修改图谱空间
-/** PUT /api/v1/ai/graph/:graph/workspace/:workspace  */
+/** PUT /ai/graph/:graph/workspace/:workspace  */
 export async function updateGraphWorkspace(
   params: {
     graph: string;
@@ -94,7 +94,7 @@ export async function updateGraphWorkspace(
 ) {
   const { graph, workspace } = params;
   return request<API.Result_AIGraphWorkspaceInfo_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}`,
+    `/ai/graph/${graph}/workspace/${workspace}`,
     {
       method: 'PUT',
       headers: {
@@ -107,7 +107,7 @@ export async function updateGraphWorkspace(
 }
 
 // 删除图谱空间
-/** DELETE /api/v1/ai/graph/:graph/workspace/:workspace*/
+/** DELETE /ai/graph/:graph/workspace/:workspace*/
 export async function deleteGraphWorkspace(
   params: {
     graph: string;
@@ -117,7 +117,7 @@ export async function deleteGraphWorkspace(
 ) {
   const { graph, workspace } = params;
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}`,
+    `/ai/graph/${graph}/workspace/${workspace}`,
     {
       method: 'DELETE',
       ...(options || {}),
@@ -125,7 +125,7 @@ export async function deleteGraphWorkspace(
   );
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace/:workspace/data */
+/** GET /ai/graph/:graph/workspace/:workspace/data */
 export async function queryGraphData(
   params: {
     graph: string;
@@ -135,7 +135,7 @@ export async function queryGraphData(
 ) {
   const { graph, workspace } = params;
   return request<API.Result_AIGraphData_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/data`,
+    `/ai/graph/${graph}/workspace/${workspace}/data`,
     {
       method: 'GET',
       ...(options || {}),
@@ -143,7 +143,7 @@ export async function queryGraphData(
   );
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace/:workspace/node/:node_id  */
+/** GET /ai/graph/:graph/workspace/:workspace/node/:node_id  */
 export async function getGraphNode(
   params: {
     graph: string;
@@ -154,7 +154,7 @@ export async function getGraphNode(
 ) {
   const { graph, workspace, node_id } = params;
   return request<API.Result_AIGraphNode_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/node/${node_id}`,
+    `/ai/graph/${graph}/workspace/${workspace}/node/${node_id}`,
     {
       method: 'GET',
       ...(options || {}),
@@ -163,7 +163,7 @@ export async function getGraphNode(
 }
 
 
-/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/node */
+/** PUT /ai/graph/:graph/workspace/:workspace/node */
 export async function addGraphNode(
   params: {
     graph: string;
@@ -175,7 +175,7 @@ export async function addGraphNode(
   const { graph, workspace } = params;
 
   return request<API.Result_AIGraphNode_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/node`,
+    `/ai/graph/${graph}/workspace/${workspace}/node`,
     {
       method: 'POST',
       headers: {
@@ -186,7 +186,7 @@ export async function addGraphNode(
     },
   );
 }
-/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/node/:node_id  */
+/** PUT /ai/graph/:graph/workspace/:workspace/node/:node_id  */
 export async function updateGraphNode(
   params: {
     graph: string;
@@ -199,7 +199,7 @@ export async function updateGraphNode(
   const { graph, workspace, node_id } = params;
 
   return request<API.Result_AIGraphNode_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/node/${node_id}`,
+    `/ai/graph/${graph}/workspace/${workspace}/node/${node_id}`,
     {
       method: 'PUT',
       headers: {
@@ -211,7 +211,7 @@ export async function updateGraphNode(
   );
 }
 
-/** DELETE /api/v1/ai/graph/:graph/workspace/:workspace/node/:node_id  */
+/** DELETE /ai/graph/:graph/workspace/:workspace/node/:node_id  */
 export async function deleteGraphNode(
   params: {
     graph: string;
@@ -223,7 +223,7 @@ export async function deleteGraphNode(
   const { graph, workspace, node_id } = params;
 
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/node/${node_id}`,
+    `/ai/graph/${graph}/workspace/${workspace}/node/${node_id}`,
     {
       method: 'DELETE',
       headers: {
@@ -234,7 +234,7 @@ export async function deleteGraphNode(
   );
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
+/** GET /ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
 export async function getGraphLink(
   params: {
     graph: string;
@@ -246,14 +246,14 @@ export async function getGraphLink(
 ) {
   const { graph, workspace, source, target } = params;
   return request<API.Result_AIGraphLink_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
+    `/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
     {
       method: 'GET',
       ...(options || {}),
     },
   );
 }
-/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/link*/
+/** PUT /ai/graph/:graph/workspace/:workspace/link*/
 export async function addGraphLink(
   params: {
     graph: string;
@@ -265,7 +265,7 @@ export async function addGraphLink(
   const { graph, workspace } = params;
 
   return request<API.Result_AIGraphLink_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link`,
+    `/ai/graph/${graph}/workspace/${workspace}/link`,
     {
       method: 'POST',
       headers: {
@@ -277,7 +277,7 @@ export async function addGraphLink(
   );
 }
 
-/** PUT /api/v1/ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
+/** PUT /ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
 export async function updateGraphLink(
   params: {
     graph: string;
@@ -291,7 +291,7 @@ export async function updateGraphLink(
   const { graph, workspace, source, target } = params;
 
   return request<API.Result_AIGraphLink_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
+    `/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
     {
       method: 'PUT',
       headers: {
@@ -303,7 +303,7 @@ export async function updateGraphLink(
   );
 }
 
-/** DELETE /api/v1/ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
+/** DELETE /ai/graph/:graph/workspace/:workspace/link/${source}/${target}*/
 export async function deleteGraphLink(
   params: {
     graph: string;
@@ -316,7 +316,7 @@ export async function deleteGraphLink(
   const { graph, workspace, source, target } = params;
 
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
+    `/ai/graph/${graph}/workspace/${workspace}/link/${source}/${target}`,
     {
       method: 'DELETE',
       headers: {
@@ -327,7 +327,7 @@ export async function deleteGraphLink(
   );
 }
 
-/** DELETE /api/v1/ai/graph/:graph/workspace/data */
+/** DELETE /ai/graph/:graph/workspace/data */
 export async function clearGraphData(
   params: {
     graph: string;
@@ -338,7 +338,7 @@ export async function clearGraphData(
   const { graph, workspace } = params;
 
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/data`,
+    `/ai/graph/${graph}/workspace/${workspace}/data`,
     {
       method: 'DELETE',
       headers: {
@@ -349,7 +349,7 @@ export async function clearGraphData(
   );
 }
 
-/** POST /api/v1/ai/graph/:graph/workspace/chat */
+/** POST /ai/graph/:graph/workspace/chat */
 export async function graphChat(
   params: {
     platformHost?: string;
@@ -368,7 +368,7 @@ export async function graphChat(
   options?: { [key: string]: any },
 ) {
   const { platformHost, graph, workspace, is_stream = true } = params;
-  let url = `/api/v1/ai/graph/${graph}/workspace/${workspace}/chat`;
+  let url = `/ai/graph/${graph}/workspace/${workspace}/chat`;
   if (platformHost) {
     url = `/${platformHost}/query`;
   }

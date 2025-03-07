@@ -1,5 +1,5 @@
 
-export const ROUTE_BASE_URL = process.env.ROUTE_BASE_URL || '/api';
+export const ROUTE_BASE_URL = process.env.SERVER_BASE_URL || '/api';
 
 export default {
     HOME: ROUTE_BASE_URL + "/",

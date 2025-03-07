@@ -4,13 +4,13 @@ import { AI_PLATFORM_TYPE_MAP } from '@/common/ai';
 import { postFetch } from '@/common/fetchRequest';
 import { request } from '@umijs/max';
 
-/** GET /api/v1/platform */
+/** GET /platform */
 export async function queryAILmPlatformList(options?: { [key: string]: any }) {
   const params = {
     type: AI_PLATFORM_TYPE_MAP?.model.value,
   };
   return request<API.Result_AIPlatformInfoList_>(
-    '/api/v1/ai/platform/actived',
+    '/ai/platform/actived',
     {
       method: 'GET',
       params: {
@@ -20,7 +20,7 @@ export async function queryAILmPlatformList(options?: { [key: string]: any }) {
     },
   );
 }
-/** GET /api/v1/ai/lm */
+/** GET /ai/lm */
 export async function queryAllAILmList(
   params: {
     platform?: string;
@@ -31,7 +31,7 @@ export async function queryAllAILmList(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.Result_PageInfo_AILmInfo__>(`/api/v1/ai/lm`, {
+  return request<API.Result_PageInfo_AILmInfo__>(`/ai/lm`, {
     method: 'GET',
     params: {
       ...params,
@@ -40,7 +40,7 @@ export async function queryAllAILmList(
   });
 }
 
-/** GET /api/v1/ai/lm/platform/:platform */
+/** GET /ai/lm/platform/:platform */
 export async function queryAILmList(
   params: {
     platform: string;
@@ -53,7 +53,7 @@ export async function queryAILmList(
 ) {
   const { platform, ...restParams } = params;
   return request<API.Result_PageInfo_AILmInfo__>(
-    `/api/v1/ai/lm/platform/${platform}`,
+    `/ai/lm/platform/${platform}`,
     {
       method: 'GET',
       params: {
@@ -64,7 +64,7 @@ export async function queryAILmList(
   );
 }
 
-/** POST /api/v1/ai/lm/platform/:platform  */
+/** POST /ai/lm/platform/:platform  */
 export async function addAILm(
   params: {
     platform: string;
@@ -76,14 +76,14 @@ export async function addAILm(
   const record = {
     ...(body || {}),
   };
-  return request<API.Result_AILmInfo_>(`/api/v1/ai/platform/${platform}/lm`, {
+  return request<API.Result_AILmInfo_>(`/ai/platform/${platform}/lm`, {
     method: 'POST',
     data: { ...record },
     ...(options || {}),
   });
 }
 
-/** GET /api/v1/ai/lm/platform/:platform/model/:model */
+/** GET /ai/lm/platform/:platform/model/:model */
 export async function getAILmInfo(
   params: {
     platform: string;
@@ -93,14 +93,14 @@ export async function getAILmInfo(
 ) {
   const { platform, model } = params;
   return request<API.Result_AILmInfo_>(
-    `/api/v1/ai/lm/platform/${platform}/model/${model}`,
+    `/ai/lm/platform/${platform}/model/${model}`,
     {
       method: 'GET',
       ...(options || {}),
     },
   );
 }
-/** PUT /api/v1/ai/lm/platform/:platform/pull  */
+/** PUT /ai/lm/platform/:platform/pull  */
 export async function pullAILm(
   params: {
     platform: string;
@@ -111,14 +111,14 @@ export async function pullAILm(
 ) {
   const { platform, is_stream = true } = params;
   return postFetch({
-    url: `/api/v1/ai/lm/platform/${platform}/pull`,
+    url: `/ai/lm/platform/${platform}/pull`,
     body: body,
     options: options,
     skipErrorHandler: true,
     is_stream: is_stream,
   });
 }
-/** PUT /api/v1/ai/lm/platform/:platform/model/:model  */
+/** PUT /ai/lm/platform/:platform/model/:model  */
 export async function modifyAILm(
   params: {
     platform: string;
@@ -129,7 +129,7 @@ export async function modifyAILm(
 ) {
   const { platform, model } = params;
   return request<API.Result_AILmInfo_>(
-    `/api/v1/ai/lm/platform/${platform}/model/${model}`,
+    `/ai/lm/platform/${platform}/model/${model}`,
     {
       method: 'PUT',
       data: body,
@@ -137,7 +137,7 @@ export async function modifyAILm(
     },
   );
 }
-/** PUT /api/v1/ai/lm/platform/:platform/model/:model/status */
+/** PUT /ai/lm/platform/:platform/model/:model/status */
 export async function modifyAILmStatus(
   params: {
     platform: string;
@@ -148,7 +148,7 @@ export async function modifyAILmStatus(
 ) {
   const { platform, model } = params;
   return request<API.Result_string_>(
-    `/api/v1/ai/lm/platform/${platform}/model/${model}/status`,
+    `/ai/lm/platform/${platform}/model/${model}/status`,
     {
       method: 'PUT',
       data: body,
@@ -156,7 +156,7 @@ export async function modifyAILmStatus(
     },
   );
 }
-/** PUT /api/v1/ai/lm/platform/:platform/model/:model/run */
+/** PUT /ai/lm/platform/:platform/model/:model/run */
 export async function runAILm(
   params: {
     platform: string;
@@ -167,7 +167,7 @@ export async function runAILm(
 ) {
   const { platform, model } = params;
   return request<API.Result_string_>(
-    `/api/v1/ai/lm/platform/${platform}/model/${model}/run`,
+    `/ai/lm/platform/${platform}/model/${model}/run`,
     {
       method: 'PUT',
       data: body,
@@ -176,7 +176,7 @@ export async function runAILm(
   );
 }
 
-/** DELETE /api/v1/ai/lm/platform/:platform/model/:model */
+/** DELETE /ai/lm/platform/:platform/model/:model */
 export async function deleteAILm(
   params: {
     platform: string;
@@ -186,7 +186,7 @@ export async function deleteAILm(
 ) {
   const { platform, model } = params;
   return request<API.Result_string_>(
-    `/api/v1/ai/lm/platform/${platform}/model/${model}`,
+    `/ai/lm/platform/${platform}/model/${model}`,
     {
       method: 'DELETE',
       ...(options || {}),
@@ -194,7 +194,7 @@ export async function deleteAILm(
   );
 }
 
-/** POST /api/v1/ai/lm/platform/:platform/model/:model/chat */
+/** POST /ai/lm/platform/:platform/model/:model/chat */
 export async function AILmChat(
   params: {
     platformHost?: string;
@@ -217,7 +217,7 @@ export async function AILmChat(
   options?: { [key: string]: any },
 ) {
   const { platformHost, platform, model, is_stream = true } = params;
-  let url = `/api/v1/ai/lm/platform/${platform}/model/${model}/chat`;
+  let url = `/ai/lm/platform/${platform}/model/${model}/chat`;
   if (platformHost) {
     url = `/${platformHost}/api/chat`;
   }
@@ -231,7 +231,7 @@ export async function AILmChat(
   });
 }
 
-/** POST /api/v1/ai/lm/platform/:platform/model/:model/generate  */
+/** POST /ai/lm/platform/:platform/model/:model/generate  */
 export async function AILmGenerate(
   params: {
     platformHost?: string;
@@ -248,7 +248,7 @@ export async function AILmGenerate(
   options?: { [key: string]: any },
 ) {
   const { platformHost, platform, model, is_stream = true } = params;
-  let url = `/api/v1/ai/lm/platform/${platform}/model/${model}/generate`;
+  let url = `/ai/lm/platform/${platform}/model/${model}/generate`;
   if (platformHost) {
     url = `/${platformHost}/api/generate`;
   }
@@ -262,7 +262,7 @@ export async function AILmGenerate(
   });
 }
 
-/** POST /api/v1/ai/lm/platform/:platform/model/:model/image  */
+/** POST /ai/lm/platform/:platform/model/:model/image  */
 export async function AILmImage(
   params: {
     platformHost?: string;
@@ -282,7 +282,7 @@ export async function AILmImage(
   options?: { [key: string]: any },
 ) {
   const { platformHost, platform, model, is_stream = true } = params;
-  let url = `/api/v1/ai/lm/platform/${platform}/model/${model}/image`;
+  let url = `/ai/lm/platform/${platform}/model/${model}/image`;
   if (platformHost) {
     url = `/${platformHost}/api/image`;
   }
@@ -296,7 +296,7 @@ export async function AILmImage(
   });
 }
 
-/** POST /api/v1/ai/lm/platform/:platform/model/:model/embed  */
+/** POST /ai/lm/platform/:platform/model/:model/embed  */
 export async function AILmEmbed(
   params: {
     platformHost?: string;
@@ -311,7 +311,7 @@ export async function AILmEmbed(
   options?: { [key: string]: any },
 ) {
   const { platformHost, platform, model, is_stream = false } = params;
-  let url = `/api/v1/ai/lm/platform/${platform}/model/${model}/embed`;
+  let url = `/ai/lm/platform/${platform}/model/${model}/embed`;
   if (platformHost) {
     url = `/${platformHost}/api/embed`;
   }

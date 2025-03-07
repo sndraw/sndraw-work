@@ -1,6 +1,6 @@
 import ServerErrorPage from '@/pages/500';
 import ROUTE_MAP from '@/routers/routeMap';
-import { clearToken, getToken } from '@/utils/authToken';
+import { clearCache, clearToken, getToken } from '@/utils/authToken';
 import { Navigate, Outlet, useLocation, useModel } from '@umijs/max';
 // 用户鉴权
 export function useAuth(props: any): {
@@ -35,7 +35,8 @@ export default () => {
   if (notSetup) {
     //  删除当前登录token，防止干扰安装流程
     clearToken();
-
+    // 清理缓存，防止干扰安装流程
+    clearCache();
     // 如果当前页面是安装页面，正常显示
     if (location?.pathname === ROUTE_MAP.SETUP) {
       return <Outlet />;

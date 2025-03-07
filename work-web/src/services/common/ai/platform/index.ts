@@ -2,7 +2,7 @@
 // 该文件由 OneAPI 自动生成，请勿手动修改！
 import { request } from '@umijs/max';
 
-/** GET /api/v1/platform/actived */
+/** GET /platform/actived */
 export async function queryAIPlatformActivedList(
   params?: {
     type: string;
@@ -12,7 +12,7 @@ export async function queryAIPlatformActivedList(
   },
 ) {
   return request<API.Result_AIPlatformInfoList_>(
-    '/api/v1/ai/platform/actived',
+    '/ai/platform/actived',
     {
       method: 'GET',
       params: {
@@ -23,7 +23,7 @@ export async function queryAIPlatformActivedList(
   );
 }
 
-/** GET /api/v1/ai/platform */
+/** GET /ai/platform */
 export async function queryAIPlatformList(
   params: {
     name: string;
@@ -35,7 +35,7 @@ export async function queryAIPlatformList(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.Result_PageInfo_AIPlatformInfo__>(`/api/v1/ai/platform`, {
+  return request<API.Result_PageInfo_AIPlatformInfo__>(`/ai/platform`, {
     method: 'GET',
     params: {
       ...params,
@@ -44,7 +44,7 @@ export async function queryAIPlatformList(
   });
 }
 
-/** POST /api/v1/ai/platform  */
+/** POST /ai/platform  */
 export async function addAIPlatform(
   body: API.AIPlatformInfoVO,
   options?: { [key: string]: any },
@@ -52,14 +52,14 @@ export async function addAIPlatform(
   const record = {
     ...(body || {}),
   };
-  return request<API.Result_AIPlatformInfo_>(`/api/v1/ai/platform`, {
+  return request<API.Result_AIPlatformInfo_>(`/ai/platform`, {
     method: 'POST',
     data: { ...record },
     ...(options || {}),
   });
 }
 
-/** GET /api/v1/ai/platform/:platform */
+/** GET /ai/platform/:platform */
 export async function getAIPlatformInfo(
   params: {
     platform: string;
@@ -68,7 +68,7 @@ export async function getAIPlatformInfo(
 ) {
   const { platform } = params;
   return request<API.Result_AIPlatformInfo_>(
-    `/api/v1/ai/platform/${platform}`,
+    `/ai/platform/${platform}`,
     {
       method: 'GET',
       ...(options || {}),
@@ -76,7 +76,7 @@ export async function getAIPlatformInfo(
   );
 }
 
-/** PUT /api/v1/ai/platform/:platform  */
+/** PUT /ai/platform/:platform  */
 export async function modifyAIPlatform(
   params: {
     platform: string;
@@ -86,7 +86,7 @@ export async function modifyAIPlatform(
 ) {
   const { platform } = params;
   return request<API.Result_AIPlatformInfo_>(
-    `/api/v1/ai/platform/${platform}`,
+    `/ai/platform/${platform}`,
     {
       method: 'PUT',
       data: body,
@@ -95,7 +95,7 @@ export async function modifyAIPlatform(
   );
 }
 
-/** DELETE /api/v1/ai/platform/:platform */
+/** DELETE /ai/platform/:platform */
 export async function deleteAIPlatform(
   params: {
     platform: string;
@@ -103,13 +103,13 @@ export async function deleteAIPlatform(
   options?: { [key: string]: any },
 ) {
   const { platform } = params;
-  return request<API.Result_string_>(`/api/v1/ai/platform/${platform}`, {
+  return request<API.Result_string_>(`/ai/platform/${platform}`, {
     method: 'DELETE',
     ...(options || {}),
   });
 }
 
-/** PUT /api/v1/ai/platform/:id/status */
+/** PUT /ai/platform/:id/status */
 export async function modifyAIPlatformStatus(
   params: {
     platform: string;
@@ -118,7 +118,7 @@ export async function modifyAIPlatformStatus(
   options?: { [key: string]: any },
 ) {
   const { platform } = params;
-  return request<API.Result_string_>(`/api/v1/ai/platform/${platform}/status`, {
+  return request<API.Result_string_>(`/ai/platform/${platform}/status`, {
     method: 'PUT',
     data: body,
     ...(options || {}),

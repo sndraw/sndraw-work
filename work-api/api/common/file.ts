@@ -17,30 +17,46 @@ const minioClient = new Client({
 console.log("minio连接成功:", minioConfig.endpoint, minioConfig.port);
 
 const createMinoClient = (
-  ops: {
-    endpoint?: string;
-    port?: number;
-    accessKey?: string;
-    secretKey?: string,
-    region?: string,
-    useSSL?: boolean,
-  }
+  url: string | undefined | null
 ) => {
-  const { endpoint, port, accessKey, secretKey, region, useSSL } = ops || {};
-
-  const publicUrl = minioConfig.publicUrl;
-  // 如果能够分离出host和port，那么可以将它们作为参数传递给minioClient
+  // 获取endpoint和port
   const hostObj = {
-    endpoint: publicUrl ? publicUrl.split(':')[0] : endpoint,
-    port: publicUrl ? Number(publicUrl.split(':')[1]) : port
+    endpoint: minioConfig.endpoint,
+    port: Number(minioConfig.port) || undefined
   }
+
+  if (minioConfig.publicUrl) {
+    try {
+      const publicURL = new URL(minioConfig.publicUrl)
+      if (publicURL) {
+        hostObj.endpoint = publicURL.hostname;
+        hostObj.port = Number(publicURL?.port) || undefined
+      }
+    } catch (error) {
+      console.error("Invalid public URL:", minioConfig.publicUrl);
+    }
+  }
+  if (!minioConfig.publicUrl && url) {
+    try {
+      const publicURL = new URL(url)
+      if (publicURL) {
+        // 使用传入的url来设置endpoint
+        hostObj.endpoint = publicURL.hostname;
+        // 使用默认端口设置port
+        hostObj.port = Number(minioConfig?.port) || undefined
+      }
+    } catch (error) {
+      console.error("Invalid URL:", url);
+    }
+  }
+  console.log(hostObj)
   return new Client({
-    endPoint: hostObj?.endpoint || minioConfig.endpoint,
-    port: hostObj?.port || minioConfig.port,
-    accessKey: accessKey || minioConfig.accessKey,
-    secretKey: secretKey || minioConfig.secretKey,
-    region: region || minioConfig.region,
-    useSSL: useSSL || minioConfig.useSSL,
+    endPoint: hostObj?.endpoint,
+    port: hostObj?.port,
+    accessKey: minioConfig.accessKey,
+    secretKey: minioConfig.secretKey,
+    region: minioConfig.region,
+    useSSL: minioConfig.useSSL,
   })
 };
 
@@ -154,9 +170,7 @@ export const presignedGetObject = async (
   try {
     let cilent = minioClient;
     if (ctx && ctx.request?.header?.referer) {
-      cilent = createMinoClient({
-        endpoint: ctx.request?.header?.referer?.split('/')[2]?.split(':')[0]
-      })
+      cilent = createMinoClient(ctx.request?.header?.referer)
     }
     const { objectName, expires = 1 * 60 * 60 } = params;
 
@@ -181,9 +195,7 @@ export const presignedPutObject = async (
   try {
     let cilent = minioClient;
     if (ctx) {
-      cilent = createMinoClient({
-        endpoint: ctx.request?.header?.referer?.split('/')[2]?.split(':')[0]
-      })
+      cilent = createMinoClient(ctx.request?.header?.referer)
     }
     const { objectName, expires = 1 * 60 * 60 } = params;
 
@@ -208,9 +220,7 @@ export const presignedDeleteObject = async (
   try {
     let cilent = minioClient;
     if (ctx) {
-      cilent = createMinoClient({
-        endpoint: ctx.request?.header?.referer?.split('/')[2]?.split(':')[0]
-      })
+      cilent = createMinoClient(ctx.request?.header?.referer)
     }
     const { objectName, expires = 1 * 60 * 60 } = params;
 

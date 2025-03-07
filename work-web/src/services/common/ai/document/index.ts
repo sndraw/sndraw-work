@@ -2,7 +2,7 @@
 // 该文件由 OneAPI 自动生成，请勿手动修改！
 import { request } from '@umijs/max';
 
-/** POST /api/v1/ai/graph/:graph/workspace/data/text */
+/** POST /ai/graph/:graph/workspace/data/text */
 export async function insertDocumentText(
   params: {
     graph: string;
@@ -14,7 +14,7 @@ export async function insertDocumentText(
   const { graph, workspace } = params;
 
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/data/text`,
+    `/ai/graph/${graph}/workspace/${workspace}/data/text`,
     {
       method: 'POST',
       headers: {
@@ -26,7 +26,7 @@ export async function insertDocumentText(
   );
 }
 
-/** POST /api/v1/ai/graph/:graph/workspace/data/file */
+/** POST /ai/graph/:graph/workspace/data/file */
 export async function insertDocumentFile(
   params: {
     graph: string;
@@ -38,7 +38,7 @@ export async function insertDocumentFile(
   const { graph, workspace } = params;
 
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/data/file`,
+    `/ai/graph/${graph}/workspace/${workspace}/data/file`,
     {
       method: 'POST',
       headers: {
@@ -50,7 +50,7 @@ export async function insertDocumentFile(
   );
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace/document */
+/** GET /ai/graph/:graph/workspace/document */
 export async function queryGraphDocumentList(
   params: {
     graph: string;
@@ -60,7 +60,7 @@ export async function queryGraphDocumentList(
 ) {
   const { graph, workspace } = params;
   return request<API.Result_AIGraphInfoList_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/document`,
+    `/ai/graph/${graph}/workspace/${workspace}/document`,
     {
       method: 'GET',
       ...(options || {}),
@@ -68,7 +68,7 @@ export async function queryGraphDocumentList(
   );
 }
 
-/** GET /api/v1/ai/graph/:graph/workspace/document/:document_id */
+/** GET /ai/graph/:graph/workspace/document/:document_id */
 export async function getGraphDocument(
   params: {
     graph: string;
@@ -80,7 +80,7 @@ export async function getGraphDocument(
   const { graph, workspace, document_id } = params;
 
   return request<API.Result_AIGraphDocumentInfo_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/document/${document_id}`,
+    `/ai/graph/${graph}/workspace/${workspace}/document/${document_id}`,
     {
       method: 'GET',
       ...(options || {}),
@@ -88,7 +88,7 @@ export async function getGraphDocument(
   );
 }
 
-/** DELETE /api/v1/ai/graph/:graph/workspace/document/:document_id */
+/** DELETE /ai/graph/:graph/workspace/document/:document_id */
 export async function deleteGraphDocument(
   params: {
     graph: string;
@@ -100,7 +100,7 @@ export async function deleteGraphDocument(
   const { graph, workspace, document_id } = params;
 
   return request<API.Result_string_>(
-    `/api/v1/ai/graph/${graph}/workspace/${workspace}/document/${document_id}`,
+    `/ai/graph/${graph}/workspace/${workspace}/document/${document_id}`,
     {
       method: 'DELETE',
       headers: {

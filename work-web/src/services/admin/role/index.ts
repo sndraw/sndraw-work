@@ -2,15 +2,15 @@
 // 该文件由 OneAPI 自动生成，请勿手动修改！
 import { request } from '@umijs/max';
 
-/** GET /api/v1/admin/role/actived */
+/** GET /admin/role/actived */
 export async function queryActivedRoleList(options?: { [key: string]: any }) {
-  return request<API.Result_RoleInfoList_>('/api/v1/admin/role/actived', {
+  return request<API.Result_RoleInfoList_>('/admin/role/actived', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** GET /api/v1/admin/role */
+/** GET /admin/role */
 export async function queryRoleList(
   params: {
     name?: string;
@@ -21,7 +21,7 @@ export async function queryRoleList(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.Result_PageInfo_RoleInfo__>('/api/v1/admin/role', {
+  return request<API.Result_PageInfo_RoleInfo__>('/admin/role', {
     method: 'GET',
     params: {
       ...params,
@@ -30,7 +30,7 @@ export async function queryRoleList(
   });
 }
 
-/** POST /api/v1/admin/role */
+/** POST /admin/role */
 export async function addRole(
   body: API.RoleInfoVO,
   options?: { [key: string]: any },
@@ -38,14 +38,14 @@ export async function addRole(
   const record = {
     ...(body || {}),
   };
-  return request<API.Result_RoleInfo_>('/api/v1/admin/role', {
+  return request<API.Result_RoleInfo_>('/admin/role', {
     method: 'POST',
     data: { ...record },
     ...(options || {}),
   });
 }
 
-/** GET /api/v1/admin/role/${roleId} */
+/** GET /admin/role/${roleId} */
 export async function getRoleDetail(
   params: {
     /** roleId */
@@ -54,13 +54,13 @@ export async function getRoleDetail(
   options?: { [key: string]: any },
 ) {
   const { roleId: param0 } = params;
-  return request<API.Result_RoleInfo_>(`/api/v1/admin/role/${param0}`, {
+  return request<API.Result_RoleInfo_>(`/admin/role/${param0}`, {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** PUT /api/v1/admin/role/${roleId} */
+/** PUT /admin/role/${roleId} */
 export async function modifyRole(
   params: {
     /** roleId */
@@ -70,14 +70,14 @@ export async function modifyRole(
   options?: { [key: string]: any },
 ) {
   const { roleId: param0 } = params;
-  return request<API.Result_RoleInfo_>(`/api/v1/admin/role/${param0}`, {
+  return request<API.Result_RoleInfo_>(`/admin/role/${param0}`, {
     method: 'PUT',
     data: body,
     ...(options || {}),
   });
 }
 
-/** DELETE /api/v1/admin/role/${roleId} */
+/** DELETE /admin/role/${roleId} */
 export async function deleteRole(
   params: {
     /** roleId */
@@ -86,13 +86,13 @@ export async function deleteRole(
   options?: { [key: string]: any },
 ) {
   const { roleId: param0 } = params;
-  return request<API.Result_string_>(`/api/v1/admin/role/${param0}`, {
+  return request<API.Result_string_>(`/admin/role/${param0}`, {
     method: 'DELETE',
     ...(options || {}),
   });
 }
 
-/** PUT /api/v1/admin/role/${roleId}/status */
+/** PUT /admin/role/${roleId}/status */
 export async function modifyRoleStatus(
   params: {
     /** roleId */
@@ -102,7 +102,7 @@ export async function modifyRoleStatus(
   options?: { [key: string]: any },
 ) {
   const { roleId: param0 } = params;
-  return request<API.Result_string_>(`/api/v1/admin/role/${param0}/status`, {
+  return request<API.Result_string_>(`/admin/role/${param0}/status`, {
     method: 'PUT',
     data: body,
     ...(options || {}),

@@ -1,6 +1,7 @@
 import { message as messageCmp } from 'antd';
 import queryString from 'query-string';
 import addAuthHeader from './addAuthHeader';
+import { SERVER_BASE_URL } from '@/config/api';
 
 export const postFetch = async (opts: {
   url: string;
@@ -35,14 +36,15 @@ export const postFetch = async (opts: {
     const paramStr = queryString.stringify({
       _t: Math.random(),
     });
-    const fullUrl = `${url}?${paramStr}`;
-
+    // 拼接完整路由
+    const fullUrl = `${options?.baseURL || SERVER_BASE_URL}${url}?${paramStr}`;
+    // 请求参数处理
     const reqOptions = {
       method: 'POST',
       body: stringify
         ? JSON.stringify({
-            ...(body || {}),
-          })
+          ...(body || {}),
+        })
         : body,
       headers: {
         'Content-Type': 'application/json',
@@ -51,6 +53,7 @@ export const postFetch = async (opts: {
     };
     const { noAuth } = options;
 
+    // 构建新的请求配置
     let newConfig: any = {
       url: fullUrl,
       options: reqOptions,
@@ -58,6 +61,7 @@ export const postFetch = async (opts: {
 
     // 如果不存在noAuth标识，则向后端传递token
     if (!noAuth) {
+      // 重新构建新的请求配置
       newConfig = await new Promise((resolve, reject) => {
         addAuthHeader({
           ...newConfig,
@@ -70,7 +74,7 @@ export const postFetch = async (opts: {
     if (!newConfig) {
       throw new Error('请求配置错误');
     }
-
+    // 发送请求
     return fetch(newConfig.url, newConfig.options).then(async (response) => {
       if (!is_stream) {
         return response;

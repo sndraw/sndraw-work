@@ -2,6 +2,7 @@ import type { AxiosResponse, RequestConfig } from '@umijs/max';
 import { RequestOptions } from '@umijs/max';
 import { message as messageCmp, notification } from 'antd';
 import addAuthHeader from './addAuthHeader';
+import { SERVER_BASE_URL } from '@/config/api';
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
@@ -41,6 +42,7 @@ export enum STATUS_CODE_ENUM {
 // 运行时配置
 const requestConfig: RequestConfig = {
   // 统一的请求设定
+  baseURL: SERVER_BASE_URL,
   timeout: 30000,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
