@@ -1,6 +1,3 @@
-import "@babel/register";
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 import http from "http";
 /**
  * Get port from environment and store in Express.

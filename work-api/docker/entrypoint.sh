@@ -9,7 +9,7 @@ if [ ! -d "/app/dist" ]; then
   pnpm build
 fi
 
-npm run deploy
+pm2 startOrRestart pm2.config.js
 
 
 pm2 logs --timestamp --lines 100

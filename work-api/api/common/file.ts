@@ -49,7 +49,6 @@ const createMinoClient = (
       console.error("Invalid URL:", url);
     }
   }
-  console.log(hostObj)
   return new Client({
     endPoint: hostObj?.endpoint,
     port: hostObj?.port,
