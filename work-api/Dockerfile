@@ -28,10 +28,17 @@ WORKDIR /app
 RUN npm install pm2 -g
 
 COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/pm2.config.js /app/pm2.config.js
+COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/pnpm-lock.yaml /app/pnpm-lock.yaml
+
+# RUN npm install --omit=dev --legacy-peer-deps
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile --prod
 
 COPY ./docker/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT [ "/bin/bash","/entrypoint.sh" ]
 
 # 声明运行时容器提供服务的端口
-EXPOSE 80
+EXPOSE 5001
