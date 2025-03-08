@@ -1,8 +1,9 @@
 {
   "name": "work-web",
-  "version": "0.0.1",
+  "version": "1.0.6",
   "private": true,
-  "author": "",
+  "author": "sndraw@github.com",
+  "license":"Apache-2.0",
   "scripts": {
     "build": "max build",
     "dev": "cross-env PORT=$npm_config_port HOST=$npm_config_host max dev COMPRESS=none",

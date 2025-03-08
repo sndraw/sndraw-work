@@ -1,7 +1,9 @@
 {
   "name": "work-api",
-  "version": "1.0.0",
-  "description": "api project developed by koa",
+  "version": "1.0.6",
+  "private": true,
+  "author": "sndraw@github.com",
+  "license":"Apache-2.0",
   "main": "./api/index.ts",
   "scripts": {
     "start": "nodemon --exec npx ts-node -r tsconfig-paths/register --files api/index.ts",
@@ -20,8 +22,6 @@
   "engines": {
     "node": ">=20.11.0"
   },
-  "author": "sndraw@github.com",
-  "license": "ISC",
   "dependencies": {
     "@babel/register": "^7.25.9",
     "@babel/runtime": "^7.26.9",
