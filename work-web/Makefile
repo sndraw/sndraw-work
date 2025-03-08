@@ -1,8 +1,8 @@
 # 定义变量
-IMAGE_NAME ?= work-web
-CONTAINER_NAME ?= work-web
+IMAGE_NAME ?= sndraw/work-web
+CONTAINER_NAME ?= sndraw-work-web
 IMAGE_VERISON ?= $(shell git rev-parse --short HEAD)
-REGISTRY_URL ?= 192.168.0.24:7001
+REGISTRY_URL ?= docker.io
 PLATFORMS ?= linux/amd64,linux/arm64
 
 # 检查命令执行状态的函数
