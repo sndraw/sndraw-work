@@ -34,8 +34,6 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
   // 请求加载状态
   const [reqLoading, setReqLoading] = useState(false);
   const headerHeight = useHeaderHeight();
-  const { getGraphInfo } = useModel('graphList');
-  const graphInfo = getGraphInfo(graph);
   const access = useAccess();
   const canEdit= access.canSeeDev;
 
@@ -227,8 +225,7 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
           allowClear
           placeholder={'搜索文档'}
           defaultValue={searchText}
-          onChange={(e) => {
-            const value = e.target.value;
+          onSearch={(value) => {
             setSearchText(value);
           }}
         />
@@ -281,31 +278,6 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
         rowClassName={styles.rowItem}
         search={false}
         options={false}
-        // showHeader={false}
-        // expandable={{
-        //   columnWidth: 30,
-        //   expandedRowKeys: expandedKeys,
-        //   onExpandedRowsChange: setExpandedKeys,
-        //   expandedRowRender: (row) => {
-        //     return (
-        //       <Typography
-        //         className={styles.expandedRow}
-        //       >
-        //         {row?.error && <Tag color="error">{row.error}</Tag>}
-        //         {/* 其他信息展示 */}
-        //         <div className={styles?.nodeInfoItem}>
-        //           <label className={styles?.nodeLabel}>更新：</label>
-        //           <span className={styles?.nodeDescription}>{new Date(row.updated_at).toLocaleString()}</span>
-        //         </div>
-        //         <div className={styles?.nodeInfoItem}>
-        //           <label className={styles?.nodeLabel}>摘要：</label>
-        //           <span className={styles?.nodeDescription}>{row?.content_summary}</span>
-        //         </div>
-        //       </Typography>
-        //     );
-        //   },
-        //   rowExpandable: (record) => record?.content_summary,
-        // }}
         columns={columns}
         pagination={{
           style: {
@@ -316,7 +288,7 @@ const DocumentList: React.FC<DocumentListProps> = (props) => {
           size: 'small',
           pageSize: 10,
           showSizeChanger: true,
-          total: dataList?.length,
+          total: filterData?.length,
         }}
       />
     </div >

@@ -52,7 +52,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = (props) => {
       });
       await insertDocumentFile({ graph, workspace }, formData, {
         skipErrorHandler: true,
-        timeout: 30000,
+        timeout: 0,
       });
       // message.success("上传文档成功");
       return true;
@@ -61,8 +61,11 @@ const DocumentUpload: React.FC<DocumentUploadProps> = (props) => {
       message.error(errorData?.message || '上传文档失败');
       return false;
     } finally {
-      refresh?.();
-      setLoading(false);
+      setTimeout(() => {
+        // 延迟刷新，防止上传后立即刷新导致异步数据未及时更新
+        refresh?.();
+        setLoading(false);
+      }, 1000);
     }
   };
   useEffect(() => {

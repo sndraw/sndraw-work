@@ -17,9 +17,6 @@ const SearchPanel: React.FC<SearchPanelProps> = (props) => {
       placeholder="搜索节点"
       allowClear
       onSearch={(value) => {
-        if (!value || !value.trim()) {
-          return;
-        }
         onSearch?.(value);
       }}
     />
