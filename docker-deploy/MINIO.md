@@ -48,14 +48,9 @@
 ## 5. 将MinIO配置到Docker Compose中
 在`.env`文件中添加MinIO服务的配置。示例如下：
 ```yml
-# MinIO 映射端口
-EXPOSE_MINIO_PORT=29000
-# MinIO WebUI 映射端口
-EXPOSE_MINIO_WEBUI_PORT=29001
-# MinIO 上传地址，可以为空
-MINIO_UPLOAD_URL=http://127.0.0.1:29000
-
 # minio
+MINIO_ENDPOINT=127.0.0.1
+MINIO_PORT=9000
 MINIO_ACCESS_KEY=test
 MINIO_SECRET_KEY=test
 MINIO_BUCKET_NAME=work
@@ -69,6 +64,7 @@ MINIO_USE_SSL=false
 >
 > 3. 如果要给MinIO添加自定义域名，请确保在配置MinIO时提供正确的自定义域名，并且在DNS中正确解析该域名。
 >
-> 4. 如果要使用自定义域名，注意修改`.env`文件的相关配置
+> 4. 如果要使用自定义域名，注意修改`.env`文件的`MINIO_ENDPOINT`、`MINIO_PORT`和`MINIO_USE_SSL`等字段。
+
 
 
