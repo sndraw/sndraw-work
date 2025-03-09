@@ -1,7 +1,7 @@
 services:
   # The lightrag.
   work_lightrag:
-    image: lightrag-api:1.0.6
+    image: sndraw/lightrag-multi:1.0.6-beta-5
     restart: always
     environment:
       TZ: ${TZ:-Asia/Shanghai}
