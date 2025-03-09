@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 import { StatusEnum } from '@/constants/DataMap';
-import { getObjectData } from '@/common/file';
+import { createFileClient } from '@/common/file';
 
 class OpenAIApi {
     private readonly openai: any;
@@ -193,7 +193,11 @@ class OpenAIApi {
         if (images && Array.isArray(images)) {
             image_url = images[0]
             if (typeof image_url === "string" && (!image_url.startsWith("http") || !image_url.startsWith("https"))) {
-                image_url = await getObjectData(image_url, "base64", true)
+                image_url = await createFileClient().getObjectData({
+                    objectName: image_url,
+                    encodingType: "base64",
+                    addFileType: true,
+                })
             }
             if (image_url) {
                 userMessage.content.push({
@@ -243,7 +247,11 @@ class OpenAIApi {
                 if (images && Array.isArray(images)) {
                     let image_url = images[0]
                     if (typeof image_url === "string" && (!image_url.startsWith("http") || !image_url.startsWith("https"))) {
-                        image_url = await getObjectData(image_url, "base64", true)
+                        image_url = await createFileClient().getObjectData({
+                            objectName: image_url,
+                            encodingType: "base64",
+                            addFileType: true,
+                        })
                     }
                     newMessage.content.push({
                         type: "image_url",

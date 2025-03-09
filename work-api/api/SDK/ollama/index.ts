@@ -2,7 +2,7 @@ import { Ollama } from 'ollama';
 import { OLLAMA_CONFIG } from "@/common/ai";
 import { StatusEnum } from '@/constants/DataMap';
 import { MD5 } from 'crypto-js';
-import { getObjectData } from '@/common/file';
+import { createFileClient } from '@/common/file';
 
 class OllamaApi {
     private readonly ollama: Ollama;
@@ -20,6 +20,7 @@ class OllamaApi {
             ...params
         });
     }
+
     // 获取模型列表及其运行状态
     async queryAILmAndStatusList(query: any): Promise<any[]> {
         const list = await this.ollama.list();
@@ -207,7 +208,10 @@ class OllamaApi {
             for (let i = 0; i < newImages.length; i++) {
                 const imageId = newImages[i];
                 if (typeof imageId === "string") {
-                    const imageData = await getObjectData(imageId, "base64");
+                    const imageData = await createFileClient().getObjectData({
+                        objectName: imageId,
+                        encodingType: "base64"
+                    });
                     newImages[i] = imageData;
                 }
             }
@@ -229,7 +233,12 @@ class OllamaApi {
                 for (let i = 0; i < message.images.length; i++) {
                     const imageId = message.images[i];
                     if (typeof imageId === "string") {
-                        const imageData = await getObjectData(imageId, "base64");
+                        const imageData = await createFileClient().getObjectData(
+                            {
+                                objectName: imageId,
+                                encodingType: "base64"
+                            },
+                        );
                         message.images[i] = imageData;
                     }
                 }

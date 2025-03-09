@@ -3,9 +3,9 @@ import { resultError, resultSuccess } from "../common/resultFormat";
 import { Context } from "koa";
 import fs from "fs";
 import { UPLOAD_FILE_TYPE } from "@/common/ai";
-import { bucketName, fPutObject, getObjectStream, presignedGetObject, presignedPutObject } from "@/common/file";
 import FileLogService from "@/service/FileLogService";
 import { StatusEnum } from "@/constants/DataMap";
+import { createFileClient } from "@/common/file";
 /**
  * 文件-接口
  **/
@@ -15,13 +15,16 @@ class FileController extends BaseController {
     static async getUploadUrl(ctx: Context) {
         const { object_id } = ctx.params;
         const { name, size, mimetype } = ctx.request.query;
+        // 初始化文件上传客户端
+        const fileClient = createFileClient();
+        
         let uploadUrl = "";
         try {
             if (!object_id) {
                 throw new Error("缺少对象ID参数");
             }
             // 获取上传地址
-            uploadUrl = await presignedPutObject({ objectName: object_id }, ctx);
+            uploadUrl = await fileClient.presignedPutObject({ objectName: object_id });
             ctx.status = 200;
             // 返回上传地址
             ctx.body = {
@@ -45,7 +48,7 @@ class FileController extends BaseController {
                     FileLogService.addFileLog({
                         name: name,
                         objectId: object_id,
-                        path: bucketName,
+                        path: fileClient.bucketName,
                         size: size,
                         mimetype: mimetype,
                         userId: ctx.userId,
@@ -65,6 +68,8 @@ class FileController extends BaseController {
         if (!ctx.request?.files) {
             throw new Error("文件列表为空");
         }
+        // 初始化文件上传客户端
+        const fileClient = createFileClient();
         // 返回上传文件的列表
         const resultList = [];
         try {
@@ -96,22 +101,28 @@ class FileController extends BaseController {
                 }
                 const objectId = crypto.randomUUID();
                 try {
-                    const result = await fPutObject(objectId, file.filepath, {
-                        'Content-Type': file.mimetype
-                    });
+                    const result = await fileClient.fPutObject(
+                        {
+                            objectName: objectId,
+                            filePath: file.filepath,
+                            metaData: {
+                                'Content-Type': file.mimetype
+                            }
+                        }
+                    );
                     if (result) {
                         FileLogService.addFileLog({
                             name: file.originalFilename,
                             objectId: objectId,
-                            path: bucketName,
+                            path: fileClient.bucketName,
                             size: file.size,
                             mimetype: file.mimetype,
                             userId: ctx.userId
                         })
 
-                        const downloadUrl = await presignedGetObject({ objectName: objectId }, ctx);
+                        const downloadUrl = await fileClient.presignedGetObject({ objectName: objectId });
 
-                        const previewUrl = await presignedGetObject({ objectName: objectId }, ctx);
+                        const previewUrl = await fileClient.presignedGetObject({ objectName: objectId });
                         resultList.push({
                             filename: file.originalFilename,
                             objectId: objectId,
@@ -162,18 +173,20 @@ class FileController extends BaseController {
     static async preview(ctx: Context) {
         const { object_id } = ctx.params;
         const { stream = false } = ctx.query;
+        // 初始化文件上传客户端
+        const fileClient = createFileClient();
         try {
             if (!object_id) {
                 throw new Error("缺少对象ID参数");
             }
             // 下载文件流
             if (stream) {
-                const result = await getObjectStream(object_id);
+                const result = await fileClient.getObjectStream(object_id);
                 ctx.status = 200;
                 ctx.body = result;
                 return
             }
-            const result = await presignedGetObject({ objectName: object_id }, ctx);
+            const result = await fileClient.presignedGetObject({ objectName: object_id });
             ctx.status = 200;
             ctx.body = {
                 url: result,
@@ -194,19 +207,20 @@ class FileController extends BaseController {
     static async download(ctx: Context) {
         const { object_id } = ctx.params;
         const { stream = false } = ctx.query;
-
+        // 初始化文件上传客户端
+        const fileClient = createFileClient();
         try {
             if (!object_id) {
                 throw new Error("缺少对象ID参数");
             }
             // 下载文件流
             if (stream) {
-                const result = await getObjectStream(object_id);
+                const result = await fileClient.getObjectStream(object_id);
                 ctx.status = 200;
                 ctx.body = result;
                 return
             }
-            const result = await presignedGetObject({ objectName: object_id }, ctx);
+            const result = await fileClient.presignedGetObject({ objectName: object_id });
             ctx.status = 200;
             ctx.body = {
                 url: result,
