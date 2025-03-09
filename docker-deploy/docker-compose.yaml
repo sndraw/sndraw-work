@@ -102,6 +102,7 @@ services:
       retries: 30
     networks:
       - work_shared_network
+      - default
 
   # The redis cache.
   work_redis:
