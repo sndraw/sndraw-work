@@ -43,7 +43,6 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
   const [expandedKeys, setExpandedKeys] = useState<readonly Key[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
 
   const [searchText, setSearchText] = useState<string>('' as string);
   // 操作状态管理
@@ -240,7 +239,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
       className={classNames(styles.container, className)}
       style={containerStyle()}
     >
-      <Space ref={titleRef} size={0} wrap className={styles.header}>
+      <Space size={0} wrap className={styles.header}>
         <Space size={0} wrap className={styles.documentTags}>
           <span>{graph}</span>
         </Space>

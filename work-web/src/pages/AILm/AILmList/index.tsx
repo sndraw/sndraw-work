@@ -35,7 +35,7 @@ const AILmPage: React.FC = () => {
   return (
     <LmList
       mode={MODE_ENUM.EDIT}
-      className={styles.container}
+      className={styles.pageContainer}
       platform={platform}
       changePlatform={(newPlatform) => {
         navigate(generatePath(ROUTE_MAP.AI_LM_LIST, { platform: newPlatform }));
