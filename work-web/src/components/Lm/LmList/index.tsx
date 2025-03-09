@@ -57,7 +57,7 @@ const LmList: React.FC<LmListPropsType> = (props) => {
   // 计算样式
   const containerStyle = useCallback(() => {
     return {
-      height: `calc(100vh - ${headerHeight + 20}px)`,
+      height: `calc(100vh - ${headerHeight + 40}px)`,
     };
   }, [headerHeight]);
   
@@ -93,8 +93,7 @@ const LmList: React.FC<LmListPropsType> = (props) => {
           allowClear
           placeholder={'搜索模型'}
           defaultValue={searchText}
-          onChange={(e) => {
-            const value = e.target.value;
+          onSearch={(value) => {
             setSearchText(value);
           }}
         />
@@ -135,38 +134,21 @@ const LmList: React.FC<LmListPropsType> = (props) => {
       <ProList
         ghost={true}
         className={styles.cardList}
-        // toolbar={{
-        //   actions: [
-        //     <FloatButton.Group key={'addLmGroup'}>
-        //       <Access
-        //         accessible={
-        //           canEdit &&
-        //           platformInfo?.code === AI_LM_PLATFORM_MAP?.ollama.value
-        //         }
-        //         key="addLmAccess"
-        //       >
-        //         {platform && (
-        //           <LmPull
-        //             platform={platform}
-        //             pullItem={pullAILm}
-        //             refresh={refresh}
-        //           />
-        //         )}
-        //       </Access>
-        //       <FloatButton
-        //         tooltip="刷新"
-        //         icon={<ReloadOutlined />}
-        //         key="refresh"
-        //         onClick={() => {
-        //           refresh();
-        //         }}
-        //       ></FloatButton>
-        //     </FloatButton.Group>,
-        //   ],
-        // }}
         rowSelection={{}}
         itemCardProps={{
           ghost: false,
+        }}
+        virtual
+        pagination={{
+          style: {
+            position: 'fixed',
+            bottom: '10px',
+            right: '30px',
+          },
+          size: 'small',
+          pageSize: 9,
+          showSizeChanger: true,
+          total: filterData?.length,
         }}
         grid={{
           gutter: [24, 12],

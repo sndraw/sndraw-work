@@ -41,7 +41,7 @@ const GraphList: React.FC<GraphListPropsType> = (props) => {
   // 计算样式
   const containerStyle = useCallback(() => {
     return {
-      height: `calc(100vh - ${headerHeight + 20}px)`,
+      height: `calc(100vh - ${headerHeight + 40}px)`,
     };
   }, [headerHeight]);
 
@@ -71,8 +71,7 @@ const GraphList: React.FC<GraphListPropsType> = (props) => {
           allowClear
           placeholder={'搜索图谱空间'}
           defaultValue={searchText}
-          onChange={(e) => {
-            const value = e.target.value;
+          onSearch={(value) => {
             setSearchText(value);
           }}
         />
@@ -128,6 +127,17 @@ const GraphList: React.FC<GraphListPropsType> = (props) => {
             />
           </div>
         )}
+        pagination={{
+          style: {
+            position: 'fixed',
+            bottom: '10px',
+            right: '30px',
+          },
+          size: 'small',
+          pageSize: 9,
+          showSizeChanger: true,
+          total: filterData?.length,
+        }}
       />
       <Outlet />
     </div>

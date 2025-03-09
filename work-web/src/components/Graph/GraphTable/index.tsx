@@ -212,12 +212,16 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
   }, [headerHeight]);
 
 
-  const filterNodes = useCallback((searchText: string): any[] => {
+  const filterNodes = useMemo((): any[] => {
     const { nodes, edges } = graphData || {};
     if (!nodes) return [];
-    const fliterNodes = nodes.filter((item: any) =>
-      item?.label?.toLowerCase()?.includes(searchText?.toLowerCase()),
-    );
+    let fliterNodes: any[] = [...nodes];
+    if (searchText) {
+      fliterNodes = nodes.filter((item: any) =>
+        item?.label?.toLowerCase()?.includes(searchText?.toLowerCase()),
+      );
+    };
+
     const newNodes = fliterNodes.map((node: any, index: number) => {
       const filterEdges = edges?.filter((edge: any) => {
         return edge?.source === node.id;
@@ -228,8 +232,9 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
         edges: filterEdges
       };
     });
+
     return newNodes;
-  }, [graphData]);
+  }, [graphData, searchText]);
 
 
   // 请求加载状态
@@ -254,8 +259,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
           placeholder={'搜索节点'}
           value={searchText}
           onChange={(e) => {
-            const value = e.target.value;
-            setSearchText(value);
+            setSearchText(e.target.value);
           }}
         />
         <FloatButton.Group>
@@ -291,7 +295,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
         className={styles.tableWrapper}
         loading={loading}
         rowKey={'id'}
-        dataSource={filterNodes(searchText)}
+        dataSource={filterNodes}
         rowClassName={styles.rowItem}
         search={false}
         options={false}
@@ -331,7 +335,7 @@ const GraphTable: React.FC<GraphTablePropsType> = (props) => {
           size: 'small',
           pageSize: 10,
           showSizeChanger: true,
-          total: graphData?.nodes?.length,
+          total: filterNodes?.length,
         }}
       />
       {/* 添加节点关系 */}
