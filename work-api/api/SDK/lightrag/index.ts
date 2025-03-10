@@ -33,8 +33,8 @@ export default class LightragAPI {
                     data: [
                         {
                             name: 'default',
-                            mtime: this.config?.updatedAt,
-                            birthtime: this.config?.createdAt,
+                            mtime: this.config?.updatedAt / 1000,
+                            birthtime: this.config?.createdAt / 1000,
                         }
                     ]
                 }
@@ -62,8 +62,8 @@ export default class LightragAPI {
                 return {
                     data: {
                         name: 'default',
-                        mtime: this.config?.updatedAt,
-                        birthtime: this.config?.createdAt,
+                        mtime: this.config?.updatedAt / 1000,
+                        birthtime: this.config?.createdAt / 1000,
                     }
                 }
             }
