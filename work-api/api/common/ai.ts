@@ -3,19 +3,14 @@ export const OLLAMA_CONFIG = {
   keep_alive: process.env?.ollama_KEEPALIVE || '5m',
 }
 
-
 // 支持的平台类型-MAP
 export const AI_PLATFORM_TYPE_MAP = {
-  model: {
-    value: 'model',
-    text: '模型平台'
-  },
+  model: { value: 'model', text: '模型平台' },
   // KNOWLEDGE: { value: 'knowledge', text: '知识库' },
-  graph: {
-    value: 'graph',
-    text: '知识图谱'
-  }
+  graph: { value: 'graph', text: '知识图谱' },
+  agent: { value: 'agent', text: '智能助手' }
 };
+
 // 支持的模型平台-MAP
 export const AI_LM_PLATFORM_MAP = {
   ollama: {
@@ -73,6 +68,7 @@ export enum AI_GRAPH_MODE_ENUM {
   MIX = 'mix'
 }
 
+
 // 支持知识图谱-文件上传类型
 export const AI_GRAPH_UPLOAD_FILE_TYPE = [
   ".txt", ".md", ".pdf", ".docx", ".pptx",
@@ -93,5 +89,15 @@ export const UPLOAD_FILE_TYPE = [
 ];
 
 
-
+// 支持的Agent类型-MAP
+export const AI_AGENT_MAP = {
+  openmanus: {
+    value: 'OpenManus',
+    text: 'OpenManus'
+  },
+  owl: {
+    value: 'OWL',
+    text: 'OWL'
+  },
+}
 

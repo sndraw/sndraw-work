@@ -369,6 +369,32 @@ export default {
             USER_ROLE_ENUM.OPS
         ],
     },
+    AI_AGENT: {
+        GET: [
+            USER_ROLE_ENUM.USER,
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+        POST: [
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+    },
+    AI_AGENT_DETAIL: {
+        GET: [
+            USER_ROLE_ENUM.USER,
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+        PUT: [
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+        DELETE: [
+            USER_ROLE_ENUM.DEV,
+            USER_ROLE_ENUM.OPS
+        ],
+    },
     AI_PLATFORM: {
         GET: [
             USER_ROLE_ENUM.DEV,

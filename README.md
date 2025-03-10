@@ -61,7 +61,8 @@
 ![图谱编辑](./docs/assets/图谱编辑.png)  
 ### 图谱展示
 ![图谱展示](./docs/assets/图谱展示.png)
-
+### 智能助手
+![智能助手](./docs/assets/智能助手.png)
 
 ## 相关文档
 ### LightRAG-运行流程

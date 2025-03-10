@@ -9,7 +9,7 @@ import {
   ExclamationCircleOutlined,
   MessageOutlined,
   PoweroffOutlined,
-  RobotOutlined,
+  WechatWorkOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { useToken } from '@ant-design/pro-components';
@@ -131,7 +131,7 @@ const LmCard: React.FC<LmCardPropsType> = (props: LmCardPropsType) => {
           avatar={
             <Avatar
               className={styles.cardItemAvatar}
-              src={<RobotOutlined />}
+              src={<WechatWorkOutlined />}
               shape="square"
             />
           }
@@ -152,7 +152,7 @@ const LmCard: React.FC<LmCardPropsType> = (props: LmCardPropsType) => {
           //   <div className={styles.cardItemTitle}>
           //     <Avatar
           //       className={styles.cardItemAvatar}
-          //       src={<RobotOutlined />}
+          //       src={<WechatWorkOutlined />}
           //       shape="square"
           //     />
           //     <Divider type="vertical" />

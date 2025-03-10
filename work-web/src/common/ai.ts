@@ -1,3 +1,12 @@
+// 支持的平台类型-MAP
+export const AI_PLATFORM_TYPE_MAP = {
+  model: { value: 'model', text: '模型平台' },
+  // KNOWLEDGE: { value: 'knowledge', text: '知识库' },
+  graph: { value: 'graph', text: '知识图谱' },
+  agent: { value: 'agent', text: '智能助手' }
+};
+
+
 // 支持的模型平台-MAP
 export const AI_LM_PLATFORM_MAP = {
   ollama: {
@@ -44,12 +53,6 @@ export const AI_GRAPH_PLATFORM_MAP = {
     text: 'LightRAG_Multi',
   },
 };
-// 支持的平台类型-MAP
-export const AI_PLATFORM_TYPE_MAP = {
-  model: { value: 'model', text: '模型平台' },
-  // KNOWLEDGE: { value: 'knowledge', text: '知识库' },
-  graph: { value: 'graph', text: '知识图谱' },
-};
 
 // 支持的知识图谱-检索类型-MAP
 export enum AI_GRAPH_MODE_ENUM {
@@ -91,3 +94,16 @@ export const AI_VL_UPLOAD_FILE_TYPE = [
 
 // 支持视觉模型-文件上传大小限制(Byte)
 export const AI_VL_UPLOAD_FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10MB
+
+
+// 支持的Agent类型-MAP
+export const AI_AGENT_MAP = {
+  openmanus: {
+    value: 'OpenManus',
+    text: 'OpenManus'
+  },
+  owl: {
+    value: 'OWL',
+    text: 'OWL'
+  },
+}

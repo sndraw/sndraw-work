@@ -7,7 +7,7 @@ import { generatePath, useNavigate, useParams, useRequest } from '@umijs/max';
 import { useEffect } from 'react';
 import styles from './index.less';
 
-const AILmPage: React.FC = () => {
+const AILmListPage: React.FC = () => {
   const { platform } = useParams();
   const navigate = useNavigate();
 
@@ -47,4 +47,4 @@ const AILmPage: React.FC = () => {
   );
 };
 
-export default AILmPage;
+export default AILmListPage;
