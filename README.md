@@ -1,5 +1,8 @@
 # sndraw-work
 > AI模型与知识图谱管理平台
+> 
+>落地项目开源共建中： [https://github.com/sndraw/bookroom](https://github.com/sndraw/bookroom) 
+
 ## 项目介绍
 > 该项目是一个AI模型与知识图谱管理平台，旨在提供一个集中的地方来管理和使用各种机器学习和深度学习模型。它还支持构建和管理知识图谱，以便更好地理解和利用数据。
 
