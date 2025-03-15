@@ -1,4 +1,5 @@
 import {
+  AI_AGENT_MAP,
   AI_GRAPH_PLATFORM_MAP,
   AI_LM_PLATFORM_MAP,
   AI_PLATFORM_TYPE_MAP,
@@ -253,6 +254,17 @@ const AIPlatformPage: React.FC<unknown> = () => {
           );
           return options;
         }
+        if (params?.type === AI_PLATFORM_TYPE_MAP.agent.value) {
+          const options: any = Object.entries(AI_AGENT_MAP).map(
+            (item) => {
+              return {
+                label: item[1]?.text,
+                value: item[1]?.value,
+              };
+            },
+          );
+          return options;
+        }
         return [];
       },
       formItemProps: {
@@ -494,9 +506,6 @@ const AIPlatformPage: React.FC<unknown> = () => {
             //   }
             // },
           }}
-          // onChange={(value)=>{
-          //   console.log(value)
-          // }}
           recordCreatorProps={false}
           rowSelection={{
             // 注释该行则默认不显示下拉选项

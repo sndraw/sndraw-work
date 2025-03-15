@@ -37,6 +37,8 @@ type ChatPanelPropsType = {
   refresh?: () => void;
   // 子组件
   children?: ReactNode;
+  // 额外的发送选项
+  sendOptions?: any;
 };
 const ChatPanel: React.FC<ChatPanelPropsType> = (props) => {
   const {
@@ -48,6 +50,7 @@ const ChatPanel: React.FC<ChatPanelPropsType> = (props) => {
     onStop,
     disabled,
     className,
+    sendOptions
   } = props;
   const [messageList, setMessageList] = useState<ChatMessageType[]>([]);
   const [imageList, setImageList] = useState<any[]>([]);
@@ -220,7 +223,7 @@ const ChatPanel: React.FC<ChatPanelPropsType> = (props) => {
         // 离开底部时出现
         const isAtBottom =
           messageListRef.current.scrollTop +
-            messageListRef.current.clientHeight >=
+          messageListRef.current.clientHeight >=
           messageListRef.current.scrollHeight - 50;
 
         // 如果不在底部，则显示按钮
@@ -451,7 +454,7 @@ const ChatPanel: React.FC<ChatPanelPropsType> = (props) => {
             <VoiceChat
               className={styles?.voiceChat}
               disabled={disabled || loading}
-              onRecordStart={() => {}}
+              onRecordStart={() => { }}
               onRecordStop={(audioBlob) => {
                 handleVoiceMessage(audioBlob);
               }}
@@ -459,7 +462,7 @@ const ChatPanel: React.FC<ChatPanelPropsType> = (props) => {
           )}
           <Form.Item name="msg" className={styles.inputTextAreaItem}>
             <Input.TextArea
-              placeholder="请发送一条消息..."
+              placeholder={sendOptions?.placeholder || "请发送一条消息..."}
               allowClear={false}
               className={styles.inputTextArea}
               onKeyDown={handleKeyDown}

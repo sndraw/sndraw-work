@@ -45,6 +45,8 @@ export default {
     AI_GRAPH_MULTI_DOCUMENT_DETAIL: ROUTE_BASE_URL + "/ai/graph/:graph/workspace/:workspace/document/:document_id",
     AI_GRAPH_MULTI_DATA_TEXT: ROUTE_BASE_URL + "/ai/graph/:graph/workspace/:workspace/data/text",
     AI_GRAPH_MULTI_DATA_FILE: ROUTE_BASE_URL + "/ai/graph/:graph/workspace/:workspace/data/file",
+    AGENT: ROUTE_BASE_URL + "/agent",
+    AGENT_DETAIL: ROUTE_BASE_URL + "/agent/:agent",
     AI_PLATFORM: ROUTE_BASE_URL + "/ai/platform",
     AI_PLATFORM_ACTIVED: ROUTE_BASE_URL + "/ai/platform/actived",
     AI_PLATFORM_DETAIL: ROUTE_BASE_URL + "/ai/platform/:platform",

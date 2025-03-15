@@ -5,6 +5,7 @@ import admin_user from "./admin/user";
 import ai_chat from "./common/ai_chat";
 import ai_graph_multi  from "./common/ai_graph_multi";
 import ai_lm_third from "./common/ai_lm_third";
+import agent from "./common/agent";
 import ai_platform from "./common/ai_platform";
 // import image from "./common/image";
 import file from "./common/file";
@@ -30,6 +31,7 @@ const routerList = [
   ...ai_chat,
   ...ai_graph_multi,
   ...ai_lm_third,
+  ...agent,
   ...ai_platform,
   ...file,
   // ...image,

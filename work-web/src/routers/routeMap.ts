@@ -24,6 +24,10 @@ enum ROUTE_MAP {
   AI_GRAPH_CHAT = '/ai/graph/:graph/workspace/:workspace/chat',
   AI_DOCUMENT = '/ai/graph/:graph/workspace/:workspace/document',
   AI_DOCUMENT_DETAIL = '/ai/graph/:graph/workspace/:workspace/document/:document_id/detail',
+  AGENT='/agent',
+  AGENT_LIST='/agent/list',
+  AGENT_TASK='/agent/:agent/task',
+  AGENT_DETAIL='/agent/:agent/detail',
 }
 
 export default ROUTE_MAP;
